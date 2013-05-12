@@ -1,0 +1,5 @@
+backbone.php
+errors.txt
+log.txt
+*.sqlite
+test/
