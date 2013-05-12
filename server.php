@@ -7,7 +7,6 @@
  * @var array
  */
 $allowed_models = array('notes');
-$errors = array();
 $log	= array();
 $method = $_SERVER['REQUEST_METHOD'];
 $path	= isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
@@ -20,7 +19,10 @@ $parts = explode('/',$path);
 
 /* Test url for valid model request */
 $model = $parts[0];
-if (!in_array($model, $allowed_models)) $model = null;
+if (!in_array($model, $allowed_models)){
+ 	$log[] = "Model $model is not registered";
+ 	$model = null;
+}
 
 /* If we have a valid model, check if req contains an id */
 if ($model && isset($parts[1]) && ctype_digit($parts[1]) && $parts[1] > 0){
@@ -31,11 +33,14 @@ else $id = null;
 /*check input for data*/
 if ($input > '' ){
 	$data = json_decode($input, true);
+	$e = json_last_error();
+	if ($e != JSON_ERROR_NONE) $log[]='json decoding error:'.$e;
 }
 $valid_data = (isset($data) && is_array($data) && !empty($data));
 
 /* unset id from data since we got it from url, if any */
 if ($valid_data && array_key_exists('id', $data)) unset($data['id']);
+
 
 
 if ($model){
@@ -186,6 +191,7 @@ class Model{
 		$stmt->execute();
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$result = $this->convertData($rows);
+		$GLOBALS['log'][] = "GET $this->model: $id";
 		return $result;
 	}
 
@@ -201,6 +207,7 @@ class Model{
 			foreach ($models as $key=>$model) {
 				$result[] = $this->convertData($model);
 			}
+			$GLOBALS['log'][] = "GETALL $this->model";
 			return $result;
 		}
 		return false;
