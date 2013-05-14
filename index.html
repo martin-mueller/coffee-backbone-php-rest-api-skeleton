@@ -1,16 +1,40 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>My Sample Project</title>
-        <!-- data-main attribute tells require.js to load
-             scripts/main.js after require.js loads. -->
-       <script type="text/javascript" src="js/lib/jquery.js"></script>
-       <script type="text/javascript" src="js/lib/underscore.js"></script>
-       <script type="text/javascript" src="js/lib/backbone.js"></script>
-       <script type="text/javascript" src="js/notes.js"></script>
-       <script type="text/javascript" src="js/main.js"></script>
-    </head>
-    <body>
-        <h1>My Milk - Coffee Backbone Project</h1>
-    </body>
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Coffee Backbone Project</title>
+	<script type="text/javascript" src="js/lib/jquery.js"></script>
+	<script type="text/javascript" src="js/lib/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="js/lib/underscore.js"></script>
+	<script type="text/javascript" src="js/lib/backbone.js"></script>
+	<script type="text/javascript" src="js/notes.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css"/>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<script>
+	// $(function(){
+	// 	$(".draggable").draggable({});
+	// })
+	</script>
+</head>
+<body>
+<div id="wrapper">
+	<h1>Coffee Backbone Project</h1>
+	<div id="controls">
+	<button id="add">add</button>
+	</div>
+
+	
+	<script type="text/template" id="item-template">
+		<div class="view">
+			<div class="draggable ui-widget-content">
+				<a class="close ui-icon ui-icon-close" style="float:right"" href="#"></a>
+				<%- text %>
+				<!-- textarea></textarea -->
+			</div>
+		</div>
+	</script>
+</div>
+</body>
 </html>

@@ -1,7 +1,2 @@
-PUT http://localhost/coffee-bb-skel/url-test.php/notes/1
+PUT http://localhost/coffee-bb-skel/server.php/notes/1
 POST_BODY:
-{childs:[
-	{"child1": "test1"},
-	{"child2": "test1"},
-	{"child3": "test1"}
-	]}
