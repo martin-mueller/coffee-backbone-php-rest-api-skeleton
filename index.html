@@ -3,13 +3,6 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Coffee Backbone Project</title>
-	<script type="text/javascript" src="js/lib/jquery.js"></script>
-	<script type="text/javascript" src="js/lib/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="js/lib/underscore.js"></script>
-	<script type="text/javascript" src="js/lib/backbone.js"></script>
-	<script type="text/javascript" src="js/notes.js"></script>
-	<script type="text/javascript" src="js/main.js"></script>
-	
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>
 	<link rel="stylesheet" type="text/css" href="css/style.css"/>
 </head>
@@ -18,16 +11,22 @@
 <div id="wrapper">
 	<h1>Coffee Backbone Project</h1>
 	<div id="controls">
-	<button id="add">add</button>
+		<button id="add">add</button>
 	</div>
 
 	
 	<script type="text/template" id="item-template">
-		<a class="close ui-icon ui-icon-close" style="float:right" href="#"></a>
-		<%- text %>
-		<textarea></textarea>
+		<a class="close ui-icon ui-icon-circle-close" href="#"></a>
+		<textarea><%- text %></textarea>
 		<div class="marked"></div>
 	</script>
 </div>
+	<script type="text/javascript" src="js/lib/jquery.js"></script>
+	<script type="text/javascript" src="js/lib/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="js/lib/underscore.js"></script>
+	<script type="text/javascript" src="js/lib/backbone.js"></script>
+	<script type="text/javascript" src="js/lib/marked.js"></script>
+	<script type="text/javascript" src="js/notes.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>

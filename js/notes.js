@@ -6,7 +6,7 @@ var app,
 app = app || {};
 
 $(function() {
-  var _ref, _ref1, _ref2, _ref3;
+  var delay, _ref, _ref1, _ref2, _ref3;
 
   app.Note = (function(_super) {
     __extends(Note, _super);
@@ -32,6 +32,7 @@ $(function() {
 
     Note.prototype.initialize = function() {
       this.on("change:pos", this.savePos);
+      this.on("change:text", this.saveText);
       return this.on("all", function(e) {
         return console.log("Note event:" + e);
       });
@@ -39,6 +40,10 @@ $(function() {
 
     Note.prototype.savePos = function() {
       return this.save(this.pos);
+    };
+
+    Note.prototype.saveText = function() {
+      return this.save(this.text);
     };
 
     Note.prototype.validate = function(attrs, options) {};
@@ -61,7 +66,6 @@ $(function() {
     return Notes;
 
   })(Backbone.Collection);
-  app.notes = new app.Notes();
   app.NoteView = (function(_super) {
     __extends(NoteView, _super);
 
@@ -72,19 +76,20 @@ $(function() {
 
     NoteView.prototype.template = _.template($('#item-template').html());
 
-    NoteView.prototype.className = "draggable ui-widget-content";
+    NoteView.prototype.className = "notes ui-widget-content";
 
     NoteView.prototype.isDragging = false;
 
     NoteView.prototype.events = {
-      "click .close": "clear"
+      "click .close": "clear",
+      "mouseup": "enableEdit",
+      "focusout": "editDone"
     };
 
     NoteView.prototype.initialize = function() {
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(this.model, 'change:id', this.render);
-      this.render();
-      return console.log(this);
+      return this.render();
     };
 
     NoteView.prototype.render = function() {
@@ -92,12 +97,38 @@ $(function() {
       return this.$el.offset(this.model.get("pos"));
     };
 
+    NoteView.prototype.enableEdit = function() {
+      if (!this.isDragging) {
+        $('.marked', this.el).hide();
+        return $('textarea', this.el).show();
+      }
+    };
+
+    NoteView.prototype.editDone = function() {
+      this.model.set("text", $('textarea', this.el).val());
+      return this.showMarked();
+    };
+
+    NoteView.prototype.showMarked = function() {
+      var marked_v, text_v;
+
+      text_v = $('textarea', this.el).val();
+      marked_v = marked(text_v);
+      $('.marked', this.el).html(marked_v);
+      $('textarea', this.el).hide();
+      return $('.marked', this.el).show();
+    };
+
     NoteView.prototype.startDrag = function() {
       return this.isDragging = true;
     };
 
     NoteView.prototype.stopDrag = function(position) {
-      this.isDragging = false;
+      var _this = this;
+
+      delay(100, function() {
+        return _this.isDragging = false;
+      });
       return this.model.set("pos", position);
     };
 
@@ -109,7 +140,7 @@ $(function() {
     return NoteView;
 
   })(Backbone.View);
-  return app.DeskView = (function(_super) {
+  app.DeskView = (function(_super) {
     __extends(DeskView, _super);
 
     function DeskView() {
@@ -118,7 +149,10 @@ $(function() {
     }
 
     DeskView.prototype.initialize = function() {
-      return this.listenTo(app.notes, 'add', this.addOne);
+      this.listenTo(app.notes, 'add', this.addOne);
+      return marked.setOptions({
+        breaks: true
+      });
     };
 
     DeskView.prototype.el = '#wrapper';
@@ -129,9 +163,7 @@ $(function() {
     };
 
     DeskView.prototype.addNote = function() {
-      return app.notes.create({
-        text: 'test'
-      });
+      return app.notes.create();
     };
 
     DeskView.prototype.addOne = function(note) {
@@ -142,19 +174,23 @@ $(function() {
         id: "note-" + note.cid
       });
       $('#wrapper').append(noteView.el);
-      return noteView.$el.draggable({
-        stack: ".draggable",
+      noteView.$el.draggable({
+        stack: ".notes",
         delay: 100,
         start: function(event, ui) {
-          return noteView.startDrag;
+          return noteView.startDrag();
         },
         stop: function(event, ui) {
           return noteView.stopDrag(ui.position);
         }
       });
+      return noteView.showMarked();
     };
 
     return DeskView;
 
   })(Backbone.View);
+  return delay = function(ms, func) {
+    return setTimeout(func, ms);
+  };
 });
