@@ -63,6 +63,8 @@ $(function() {
 
     Notes.prototype.model = app.Note;
 
+    Notes.prototype.editEl = null;
+
     return Notes;
 
   })(Backbone.Collection);
@@ -99,14 +101,25 @@ $(function() {
 
     NoteView.prototype.enableEdit = function() {
       if (!this.isDragging) {
+        if (app.notes.editEl !== null) {
+          app.notes.editEl.editDone();
+        }
         $('.marked', this.el).hide();
-        return $('textarea', this.el).show();
+        $('textarea', this.el).show().focus();
+        this.oldText = $('textarea', this.el).val();
+        return app.notes.editEl = this;
       }
     };
 
     NoteView.prototype.editDone = function() {
-      this.model.set("text", $('textarea', this.el).val());
-      return this.showMarked();
+      var text;
+
+      text = $('textarea', this.el).val();
+      if (text !== this.oldText) {
+        this.model.set("text", text);
+      }
+      this.showMarked();
+      return app.notes.editEl = null;
     };
 
     NoteView.prototype.showMarked = function() {

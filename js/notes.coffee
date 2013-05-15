@@ -29,12 +29,13 @@ $ ->
 	class app.Notes extends Backbone.Collection
 		url: 'server.php/notes'
 		model: app.Note
-
+		editEl:	null
 
 	class app.NoteView extends Backbone.View
 		template: 	_.template($('#item-template').html())
 		className:	"notes ui-widget-content"
 		isDragging:	false
+
 		events:
 			"click .close"	: "clear"
 			"mouseup"		: "enableEdit"
@@ -51,12 +52,19 @@ $ ->
 
 		enableEdit: ->
 			if not @isDragging
+				if app.notes.editEl isnt null
+					app.notes.editEl.editDone()
 				$('.marked',@el).hide()
-				$('textarea',@el).show()
+				$('textarea',@el).show().focus()
+				@oldText = $('textarea',@el).val()
+				app.notes.editEl = @
+
 
 		editDone: ->
-			@model.set("text",$('textarea',@el).val())
-			@showMarked()		
+			text = $('textarea',@el).val()
+			@model.set("text",text) if text isnt @oldText
+			@showMarked()
+			app.notes.editEl = null
 
 		showMarked: ->
 			text_v   = $('textarea',@el).val()
