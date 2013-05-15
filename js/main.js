@@ -4,5 +4,7 @@ var app;
 app = app || {};
 
 $(function() {
-  return app.deskView = new app.DeskView();
+  app.notes = new app.Notes();
+  app.deskView = new app.DeskView();
+  return app.notes.fetch();
 });

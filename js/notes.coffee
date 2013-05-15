@@ -27,7 +27,6 @@ $ ->
 		url: 'server.php/notes'
 		model: app.Note
 
-	app.notes = new app.Notes()
 
 	class app.NoteView extends Backbone.View
 		template: 	_.template($('#item-template').html())
