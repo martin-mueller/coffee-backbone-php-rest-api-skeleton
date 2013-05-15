@@ -1,11 +1,14 @@
-## Simple coffeescript backbone.js example app skeleton with php-REST api
+# Simple coffeescript backbone.js example app with php-REST api
 
-### description
+## description
+
+### server side
 
 * Single file php - REST and database api (server.php)
 * takes model requests from backbone client
 * REST -> CRUD data	from simple id, key->value table
 
+### client side
 
-* example coffeescript/ backbone skeleton app coming soon
+* example coffeescript/ backbone notes app 
 
