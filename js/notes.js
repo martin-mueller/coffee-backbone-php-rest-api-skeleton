@@ -31,9 +31,14 @@ $(function() {
     };
 
     Note.prototype.initialize = function() {
+      this.on("change:pos", this.savePos);
       return this.on("all", function(e) {
-        return console.log("Note event:" + e + ' text:' + this.get("text"));
+        return console.log("Note event:" + e);
       });
+    };
+
+    Note.prototype.savePos = function() {
+      return this.save(this.pos);
     };
 
     Note.prototype.validate = function(attrs, options) {};
@@ -56,7 +61,7 @@ $(function() {
     return Notes;
 
   })(Backbone.Collection);
-  app.notes = new app.Notes;
+  app.notes = new app.Notes();
   app.NoteView = (function(_super) {
     __extends(NoteView, _super);
 
@@ -65,15 +70,35 @@ $(function() {
       return _ref2;
     }
 
-    NoteView.prototype.initialize = function() {
-      this.listenTo(this.model, 'destroy', this.remove);
-      return this.$el.html(this.template(this.model.toJSON()));
-    };
-
     NoteView.prototype.template = _.template($('#item-template').html());
+
+    NoteView.prototype.className = "draggable ui-widget-content";
+
+    NoteView.prototype.isDragging = false;
 
     NoteView.prototype.events = {
       "click .close": "clear"
+    };
+
+    NoteView.prototype.initialize = function() {
+      this.listenTo(this.model, 'destroy', this.remove);
+      this.listenTo(this.model, 'change:id', this.render);
+      this.render();
+      return console.log(this);
+    };
+
+    NoteView.prototype.render = function() {
+      this.$el.html(this.template(this.model.toJSON()));
+      return this.$el.offset(this.model.get("pos"));
+    };
+
+    NoteView.prototype.startDrag = function() {
+      return this.isDragging = true;
+    };
+
+    NoteView.prototype.stopDrag = function(position) {
+      this.isDragging = false;
+      return this.model.set("pos", position);
     };
 
     NoteView.prototype.clear = function(e) {
@@ -104,21 +129,29 @@ $(function() {
     };
 
     DeskView.prototype.addNote = function() {
-      console.log("Add Clicked");
       return app.notes.create({
         text: 'test'
       });
     };
 
     DeskView.prototype.addOne = function(note) {
-      var view;
+      var noteView;
 
-      view = new app.NoteView({
+      noteView = new app.NoteView({
         model: note,
         id: "note-" + note.cid
       });
-      $('#wrapper').append(view.el);
-      return view.$el.draggable();
+      $('#wrapper').append(noteView.el);
+      return noteView.$el.draggable({
+        stack: ".draggable",
+        delay: 100,
+        start: function(event, ui) {
+          return noteView.startDrag;
+        },
+        stop: function(event, ui) {
+          return noteView.stopDrag(ui.position);
+        }
+      });
     };
 
     return DeskView;

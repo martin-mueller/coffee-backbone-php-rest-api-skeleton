@@ -32,9 +32,10 @@ textarea {
   resize: none;
   background: inherit;
   pointer-events: auto;
+  display: none;
   /*outline: none;*/
   border: 0;
-  padding: 5px;
+  /*padding: 5px;*/
 }
 
 h1, h2, h3, h4 {
