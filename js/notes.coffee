@@ -4,22 +4,28 @@ $ ->
 		urlRoot: 'server.php/notes'
 
 		defaults:
-			text: ""
-			pos:
-				x: 0
-				y: 0
-			size:
-				width: 100
-				height: 100
+			"text": ""
+			"pos":
+				"x": 0
+				"y": 0
+			"size":
+				"width": 100
+				"height": 100
+			"z": 1
 
 		initialize: ->
 			@on "change:pos", @savePos
+			@on "change:size", @saveSize
 			@on "change:text", @saveText
 			@on "all", (e) -> console.log "Note event:" + e
 
 		savePos: ->
+			console.log @get("z")
 			@save @pos
-		
+
+		saveSize: ->
+			@save @size
+
 		saveText: ->
 			@save @text
 
@@ -35,6 +41,7 @@ $ ->
 		template: 	_.template($('#item-template').html())
 		className:	"notes ui-widget-content"
 		isDragging:	false
+		isResizing: false
 
 		events:
 			"click .close"	: "clear"
@@ -49,9 +56,12 @@ $ ->
 		render: ->
 			@$el.html @template(@.model.toJSON())
 			@$el.offset @model.get "pos"
+			@$el.css "width", (@model.get "size").  width
+			@$el.css "height", (@model.get "size"). height
+			# @$el.css 'z-index', @model.get "z"
 
 		enableEdit: ->
-			if not @isDragging
+			if not @isDragging and not @isResizing
 				if app.notes.editEl isnt null
 					app.notes.editEl.editDone()
 				$('.marked',@el).hide()
@@ -80,7 +90,18 @@ $ ->
 
 		stopDrag: (position) ->
 			delay 100, => @isDragging = false
-			@model.set("pos",position)		
+			@model.set("pos", position)
+			z = @$el.css('z-index')
+			@model.set("z", z)		
+		
+		startResize: ->
+			@isResizing = true
+			
+
+		stopResize: (size) ->
+			delay 100, => @isResizing = false
+			@model.set("size", size)
+			
 
 		clear: (e) ->
 			e.stopImmediatePropagation()
@@ -113,7 +134,15 @@ $ ->
 					noteView.startDrag()
 				stop:  (event, ui) ->
 					noteView.stopDrag ui.position
+			.resizable
+				start: (event, ui) ->
+					noteView.startResize()
+				stop:  (event, ui) ->
+					noteView.stopResize ui.size
+
 			noteView.showMarked()
 
 # some functions here ;)
 	delay = (ms, func) -> setTimeout func, ms
+	return
+	

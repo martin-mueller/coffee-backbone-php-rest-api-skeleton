@@ -19,19 +19,21 @@ $(function() {
     Note.prototype.urlRoot = 'server.php/notes';
 
     Note.prototype.defaults = {
-      text: "",
-      pos: {
-        x: 0,
-        y: 0
+      "text": "",
+      "pos": {
+        "x": 0,
+        "y": 0
       },
-      size: {
-        width: 100,
-        height: 100
-      }
+      "size": {
+        "width": 100,
+        "height": 100
+      },
+      "z": 1
     };
 
     Note.prototype.initialize = function() {
       this.on("change:pos", this.savePos);
+      this.on("change:size", this.saveSize);
       this.on("change:text", this.saveText);
       return this.on("all", function(e) {
         return console.log("Note event:" + e);
@@ -39,7 +41,12 @@ $(function() {
     };
 
     Note.prototype.savePos = function() {
+      console.log(this.get("z"));
       return this.save(this.pos);
+    };
+
+    Note.prototype.saveSize = function() {
+      return this.save(this.size);
     };
 
     Note.prototype.saveText = function() {
@@ -82,6 +89,8 @@ $(function() {
 
     NoteView.prototype.isDragging = false;
 
+    NoteView.prototype.isResizing = false;
+
     NoteView.prototype.events = {
       "click .close": "clear",
       "mouseup": "enableEdit",
@@ -96,11 +105,13 @@ $(function() {
 
     NoteView.prototype.render = function() {
       this.$el.html(this.template(this.model.toJSON()));
-      return this.$el.offset(this.model.get("pos"));
+      this.$el.offset(this.model.get("pos"));
+      this.$el.css("width", (this.model.get("size")).width);
+      return this.$el.css("height", (this.model.get("size")).height);
     };
 
     NoteView.prototype.enableEdit = function() {
-      if (!this.isDragging) {
+      if (!this.isDragging && !this.isResizing) {
         if (app.notes.editEl !== null) {
           app.notes.editEl.editDone();
         }
@@ -137,12 +148,28 @@ $(function() {
     };
 
     NoteView.prototype.stopDrag = function(position) {
-      var _this = this;
+      var z,
+        _this = this;
 
       delay(100, function() {
         return _this.isDragging = false;
       });
-      return this.model.set("pos", position);
+      this.model.set("pos", position);
+      z = this.$el.css('z-index');
+      return this.model.set("z", z);
+    };
+
+    NoteView.prototype.startResize = function() {
+      return this.isResizing = true;
+    };
+
+    NoteView.prototype.stopResize = function(size) {
+      var _this = this;
+
+      delay(100, function() {
+        return _this.isResizing = false;
+      });
+      return this.model.set("size", size);
     };
 
     NoteView.prototype.clear = function(e) {
@@ -196,6 +223,13 @@ $(function() {
         stop: function(event, ui) {
           return noteView.stopDrag(ui.position);
         }
+      }).resizable({
+        start: function(event, ui) {
+          return noteView.startResize();
+        },
+        stop: function(event, ui) {
+          return noteView.stopResize(ui.size);
+        }
       });
       return noteView.showMarked();
     };
@@ -203,7 +237,7 @@ $(function() {
     return DeskView;
 
   })(Backbone.View);
-  return delay = function(ms, func) {
+  delay = function(ms, func) {
     return setTimeout(func, ms);
   };
 });
