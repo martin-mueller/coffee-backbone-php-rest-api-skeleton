@@ -6,11 +6,11 @@ $ ->
 		defaults:
 			"text": ""
 			"pos":
-				"x": 0
-				"y": 0
+				"x": 200
+				"y": 150
 			"size":
-				"width": 100
-				"height": 100
+				"width": 150
+				"height": 150
 			"z-index": 1
 
 		initialize: ->
@@ -49,10 +49,11 @@ $ ->
 			"mouseup .close"	: "stopClear"
 			"mouseup .marked"	: "enableEdit"
 			"focusout"			: "editDone"
+
 		
 		initialize: ->
 			@listenTo @model, 'destroy', @remove
-			# @listenTo @model, 'change:id', @render
+			# @listenTo @model, 'change', @render
 			@render()
 
 		render: ->
@@ -106,7 +107,7 @@ $ ->
 			
 
 		clear: (e) ->
-			@$el.fadeOut 2000, =>
+			@$el.fadeOut 1000, =>
 				@model.destroy()
 			
 		stopClear: (e) ->

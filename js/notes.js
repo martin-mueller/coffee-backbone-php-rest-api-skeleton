@@ -21,12 +21,12 @@ $(function() {
     Note.prototype.defaults = {
       "text": "",
       "pos": {
-        "x": 0,
-        "y": 0
+        "x": 200,
+        "y": 150
       },
       "size": {
-        "width": 100,
-        "height": 100
+        "width": 150,
+        "height": 150
       },
       "z-index": 1
     };
@@ -175,7 +175,7 @@ $(function() {
     NoteView.prototype.clear = function(e) {
       var _this = this;
 
-      return this.$el.fadeOut(2000, function() {
+      return this.$el.fadeOut(1000, function() {
         return _this.model.destroy();
       });
     };
