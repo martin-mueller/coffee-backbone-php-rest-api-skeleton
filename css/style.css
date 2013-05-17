@@ -10,11 +10,18 @@ body, html, textarea {
   margin: 0;
   padding: 0;
 }
-
+body{
+   /*background-color: #ffaaaa;*/
+}
+div{
+  box-sizing: border-box;
+}
 #wrapper {
   width: 100%;
   height: 100%;
   min-height: 100%;
+  background-image: url(../img/cork_1.png);
+  opacity: 0.90;
 }
 
 .notes {
@@ -29,7 +36,7 @@ body, html, textarea {
   top:0;
   right: 0;
   z-index: 2;
-  background-color: #ff9966;
+  /*background-color: #ff9966;*/
 }
 .ui-icon{
   display: inline-block;
@@ -45,7 +52,7 @@ textarea {
   display: none;
   /*outline: none;*/
   border: 0;
-  /*padding: 5px;*/
+  padding: 5px;
 }
 
 h1, h2, h3, h4 {

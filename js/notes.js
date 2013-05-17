@@ -28,7 +28,7 @@ $(function() {
         "width": 100,
         "height": 100
       },
-      "z": 1
+      "z-index": 1
     };
 
     Note.prototype.initialize = function() {
@@ -41,7 +41,7 @@ $(function() {
     };
 
     Note.prototype.savePos = function() {
-      console.log(this.get("z"));
+      console.log(this.get("z-index"));
       return this.save(this.pos);
     };
 
@@ -99,7 +99,6 @@ $(function() {
 
     NoteView.prototype.initialize = function() {
       this.listenTo(this.model, 'destroy', this.remove);
-      this.listenTo(this.model, 'change:id', this.render);
       return this.render();
     };
 
@@ -148,15 +147,13 @@ $(function() {
     };
 
     NoteView.prototype.stopDrag = function(position) {
-      var z,
-        _this = this;
+      var _this = this;
 
       delay(100, function() {
         return _this.isDragging = false;
       });
-      this.model.set("pos", position);
-      z = this.$el.css('z-index');
-      return this.model.set("z", z);
+      this.model.set("z-index", this.$el.css('z-index'));
+      return this.model.set("pos", position);
     };
 
     NoteView.prototype.startResize = function() {
@@ -198,11 +195,11 @@ $(function() {
     DeskView.prototype.el = '#wrapper';
 
     DeskView.prototype.events = {
-      "click #add": "addNote",
+      "click #add": "createNote",
       "add": "addOne"
     };
 
-    DeskView.prototype.addNote = function() {
+    DeskView.prototype.createNote = function() {
       return app.notes.create();
     };
 
@@ -223,7 +220,8 @@ $(function() {
         stop: function(event, ui) {
           return noteView.stopDrag(ui.position);
         }
-      }).resizable({
+      });
+      noteView.$el.resizable({
         start: function(event, ui) {
           return noteView.startResize();
         },

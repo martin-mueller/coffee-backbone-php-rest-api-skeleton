@@ -11,7 +11,7 @@ $ ->
 			"size":
 				"width": 100
 				"height": 100
-			"z": 1
+			"z-index": 1
 
 		initialize: ->
 			@on "change:pos", @savePos
@@ -20,7 +20,7 @@ $ ->
 			@on "all", (e) -> console.log "Note event:" + e
 
 		savePos: ->
-			console.log @get("z")
+			console.log @get("z-index")
 			@save @pos
 
 		saveSize: ->
@@ -50,7 +50,7 @@ $ ->
 		
 		initialize: ->
 			@listenTo @model, 'destroy', @remove
-			@listenTo @model, 'change:id', @render
+			# @listenTo @model, 'change:id', @render
 			@render()
 
 		render: ->
@@ -90,9 +90,9 @@ $ ->
 
 		stopDrag: (position) ->
 			delay 100, => @isDragging = false
+			@model.set("z-index", @$el.css('z-index'))		
 			@model.set("pos", position)
-			z = @$el.css('z-index')
-			@model.set("z", z)		
+
 		
 		startResize: ->
 			@isResizing = true
@@ -117,10 +117,10 @@ $ ->
 		el: '#wrapper'
 
 		events:
-			"click #add"		: "addNote"
+			"click #add"		: "createNote"
 			"add"				: "addOne"
 
-		addNote: ->
+		createNote: ->
 			app.notes.create()
 			
 		
@@ -134,7 +134,7 @@ $ ->
 					noteView.startDrag()
 				stop:  (event, ui) ->
 					noteView.stopDrag ui.position
-			.resizable
+			noteView.$el.resizable
 				start: (event, ui) ->
 					noteView.startResize()
 				stop:  (event, ui) ->
