@@ -72,6 +72,8 @@ $(function() {
 
     Notes.prototype.editEl = null;
 
+    Notes.prototype.isLocked = false;
+
     return Notes;
 
   })(Backbone.Collection);
@@ -92,8 +94,9 @@ $(function() {
     NoteView.prototype.isResizing = false;
 
     NoteView.prototype.events = {
-      "click .close": "clear",
-      "mouseup": "enableEdit",
+      "mousedown .close": "clear",
+      "mouseup .close": "stopClear",
+      "mouseup .marked": "enableEdit",
       "focusout": "editDone"
     };
 
@@ -110,7 +113,7 @@ $(function() {
     };
 
     NoteView.prototype.enableEdit = function() {
-      if (!this.isDragging && !this.isResizing) {
+      if (!this.isDragging && !this.isResizing && !app.notes.isLocked) {
         if (app.notes.editEl !== null) {
           app.notes.editEl.editDone();
         }
@@ -170,8 +173,15 @@ $(function() {
     };
 
     NoteView.prototype.clear = function(e) {
-      e.stopImmediatePropagation();
-      return this.model.destroy();
+      var _this = this;
+
+      return this.$el.fadeOut(2000, function() {
+        return _this.model.destroy();
+      });
+    };
+
+    NoteView.prototype.stopClear = function(e) {
+      return this.$el.stop().css("opacity", "1");
     };
 
     return NoteView;
@@ -196,7 +206,8 @@ $(function() {
 
     DeskView.prototype.events = {
       "click #add": "createNote",
-      "add": "addOne"
+      "add": "addOne",
+      "click #toggleEdit": "toggleEdit"
     };
 
     DeskView.prototype.createNote = function() {
@@ -230,6 +241,16 @@ $(function() {
         }
       });
       return noteView.showMarked();
+    };
+
+    DeskView.prototype.toggleEdit = function() {
+      if (app.notes.isLocked) {
+        app.notes.isLocked = false;
+        return $("#toggleEdit span").removeClass("ui-icon-locked").addClass("ui-icon-unlocked");
+      } else {
+        app.notes.isLocked = true;
+        return $("#toggleEdit span").removeClass("ui-icon-unlocked").addClass("ui-icon-locked");
+      }
     };
 
     return DeskView;

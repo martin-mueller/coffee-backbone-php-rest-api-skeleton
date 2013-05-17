@@ -36,6 +36,7 @@ $ ->
 		url: 'server.php/notes'
 		model: app.Note
 		editEl:	null
+		isLocked: false
 
 	class app.NoteView extends Backbone.View
 		template: 	_.template($('#item-template').html())
@@ -44,9 +45,10 @@ $ ->
 		isResizing: false
 
 		events:
-			"click .close"	: "clear"
-			"mouseup"		: "enableEdit"
-			"focusout"		: "editDone"
+			"mousedown .close"	: "clear"
+			"mouseup .close"	: "stopClear"
+			"mouseup .marked"	: "enableEdit"
+			"focusout"			: "editDone"
 		
 		initialize: ->
 			@listenTo @model, 'destroy', @remove
@@ -61,7 +63,7 @@ $ ->
 			# @$el.css 'z-index', @model.get "z"
 
 		enableEdit: ->
-			if not @isDragging and not @isResizing
+			if not @isDragging and not @isResizing and not app.notes.isLocked
 				if app.notes.editEl isnt null
 					app.notes.editEl.editDone()
 				$('.marked',@el).hide()
@@ -104,8 +106,12 @@ $ ->
 			
 
 		clear: (e) ->
-			e.stopImmediatePropagation()
-			@model.destroy()				
+			@$el.fadeOut 2000, =>
+				@model.destroy()
+			
+		stopClear: (e) ->
+			@$el.stop().css("opacity","1");
+
 
 	class app.DeskView extends Backbone.View
 		initialize: ->
@@ -119,6 +125,7 @@ $ ->
 		events:
 			"click #add"		: "createNote"
 			"add"				: "addOne"
+			"click #toggleEdit"	: "toggleEdit"
 
 		createNote: ->
 			app.notes.create()
@@ -139,8 +146,18 @@ $ ->
 					noteView.startResize()
 				stop:  (event, ui) ->
 					noteView.stopResize ui.size
-
 			noteView.showMarked()
+
+		toggleEdit: ->
+			if app.notes.isLocked 
+				app.notes.isLocked = false;
+				$("#toggleEdit span").removeClass("ui-icon-locked")
+								.addClass("ui-icon-unlocked")
+			else					
+				app.notes.isLocked = true;
+				$("#toggleEdit span").removeClass("ui-icon-unlocked")
+								.addClass("ui-icon-locked")
+
 
 # some functions here ;)
 	delay = (ms, func) -> setTimeout func, ms
