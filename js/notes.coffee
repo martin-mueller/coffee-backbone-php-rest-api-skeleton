@@ -6,11 +6,11 @@ $ ->
 		defaults:
 			"text": ""
 			"pos":
-				"x": 200
-				"y": 150
+				"top": 150
+				"left": 200
 			"size":
-				"width": 150
-				"height": 150
+				"width": 250
+				"height": 250
 			"z-index": 1
 
 		initialize: ->
@@ -39,7 +39,7 @@ $ ->
 		isLocked: false
 
 	class app.NoteView extends Backbone.View
-		template: 	_.template($('#item-template').html())
+		template: _.template($('#item-template').html())
 		className:	"notes ui-widget-content"
 		isDragging:	false
 		isResizing: false
@@ -47,9 +47,8 @@ $ ->
 		events:
 			"mousedown .close"	: "clear"
 			"mouseup .close"	: "stopClear"
-			"mouseup .marked"	: "enableEdit"
+			"click .marked"		: "enableEdit"
 			"focusout"			: "editDone"
-
 		
 		initialize: ->
 			@listenTo @model, 'destroy', @remove
@@ -57,14 +56,18 @@ $ ->
 			@render()
 
 		render: ->
-			@$el.html @template(@.model.toJSON())
+			@$el.html   @template(@.model.toJSON())
 			@$el.offset @model.get "pos"
-			@$el.css "width", (@model.get "size").  width
-			@$el.css "height", (@model.get "size"). height
+			@$el.width  @model.get("size").width
+			@$el.height @model.get("size").height
+			# return $el for chaining (?)
+			return @$el
 			# @$el.css 'z-index', @model.get "z"
 
-		enableEdit: ->
+		enableEdit: (e) ->
 			if not @isDragging and not @isResizing and not app.notes.isLocked
+				# prevent default in case a link in the marked el was clicked
+				e.preventDefault()
 				if app.notes.editEl isnt null
 					app.notes.editEl.editDone()
 				$('.marked',@el).hide()
@@ -109,7 +112,7 @@ $ ->
 		clear: (e) ->
 			@$el.fadeOut 1000, =>
 				@model.destroy()
-			
+
 		stopClear: (e) ->
 			@$el.stop().css("opacity","1");
 

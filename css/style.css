@@ -46,7 +46,7 @@ div, textarea{
   top:0;
   right: 0;
   z-index: 2;
-  /*background-color: #ff9966;*/
+  background-color: #ffffff;
 }
 .ui-icon{
   display: inline-block;

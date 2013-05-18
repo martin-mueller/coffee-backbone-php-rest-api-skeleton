@@ -21,12 +21,12 @@ $(function() {
     Note.prototype.defaults = {
       "text": "",
       "pos": {
-        "x": 200,
-        "y": 150
+        "top": 150,
+        "left": 200
       },
       "size": {
-        "width": 150,
-        "height": 150
+        "width": 250,
+        "height": 250
       },
       "z-index": 1
     };
@@ -96,7 +96,7 @@ $(function() {
     NoteView.prototype.events = {
       "mousedown .close": "clear",
       "mouseup .close": "stopClear",
-      "mouseup .marked": "enableEdit",
+      "click .marked": "enableEdit",
       "focusout": "editDone"
     };
 
@@ -108,12 +108,14 @@ $(function() {
     NoteView.prototype.render = function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.$el.offset(this.model.get("pos"));
-      this.$el.css("width", (this.model.get("size")).width);
-      return this.$el.css("height", (this.model.get("size")).height);
+      this.$el.width(this.model.get("size").width);
+      this.$el.height(this.model.get("size").height);
+      return this.$el;
     };
 
-    NoteView.prototype.enableEdit = function() {
+    NoteView.prototype.enableEdit = function(e) {
       if (!this.isDragging && !this.isResizing && !app.notes.isLocked) {
+        e.preventDefault();
         if (app.notes.editEl !== null) {
           app.notes.editEl.editDone();
         }
