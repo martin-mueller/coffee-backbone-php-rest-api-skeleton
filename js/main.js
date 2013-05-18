@@ -6,5 +6,6 @@ app = app || {};
 $(function() {
   app.notes = new app.Notes();
   app.deskView = new app.DeskView();
-  return app.notes.fetch();
+  app.notes.fetch();
+  return hljs.initHighlightingOnLoad();
 });

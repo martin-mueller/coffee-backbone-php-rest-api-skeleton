@@ -132,7 +132,9 @@ $ ->
 			"click #toggleEdit"	: "toggleEdit"
 
 		createNote: ->
-			z = app.notes.last().get("z-index") + 1
+			z = 1
+			l = app.notes.last()
+			z = l.get("z-index") + 1 if l != undefined
 			app.notes.create({ "z-index" : z })
 			
 		
