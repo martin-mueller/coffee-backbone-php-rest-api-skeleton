@@ -87,6 +87,7 @@ $ ->
 			text_v   = $('textarea',@el).val()
 			marked_v = marked(text_v)
 			$m.html(marked_v)
+			hljs.highlightBlock($m.get(0))
 			$('textarea',@el).hide()
 			$m.show()	
 

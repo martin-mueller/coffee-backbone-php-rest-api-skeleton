@@ -35,6 +35,7 @@ div, textarea{
 
 
 .notes {
+  background: url(brown_papersq.png);
   width: 150px;
   height: 150px;
   position: absolute;
@@ -109,4 +110,8 @@ td,th{
 }
 th{
   background: #eeffee;
+}
+
+code{
+  font-size: 12px;
 }

@@ -144,6 +144,7 @@ $(function() {
       text_v = $('textarea', this.el).val();
       marked_v = marked(text_v);
       $m.html(marked_v);
+      hljs.highlightBlock($m.get(0));
       $('textarea', this.el).hide();
       return $m.show();
     };
