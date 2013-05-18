@@ -234,7 +234,7 @@ $(function() {
         model: note,
         id: "note-" + note.cid
       });
-      $('#wrapper').append(noteView.el);
+      $('#desk').append(noteView.el);
       noteView.$el.draggable({
         stack: ".notes",
         delay: 100,

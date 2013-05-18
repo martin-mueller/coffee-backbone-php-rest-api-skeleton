@@ -9,6 +9,7 @@ body, html, textarea {
   font-size: 16px;
   margin: 0;
   padding: 0;
+  color: #eee;
 }
 body{
    /*background-color: #ffaaaa;*/
@@ -23,6 +24,11 @@ div, textarea{
   background-image: url(../img/cork_1.png);
   opacity: 0.90;
 }
+#desk{
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
 #controls{
   z-index: 100;
   position: fixed;
@@ -35,7 +41,9 @@ div, textarea{
 
 
 .notes {
-  background: url(brown_papersq.png);
+  /*background: url(brown_papersq.png);*/
+  background: #333;
+  color: #eee;
   width: 150px;
   height: 150px;
   position: absolute;
@@ -47,7 +55,7 @@ div, textarea{
   top:0;
   right: 0;
   z-index: 2;
-  background-color: #ffffff;
+  background-color: #aaa;
 }
 .ui-icon{
   display: inline-block;
@@ -94,7 +102,25 @@ blockquote {
   width: inherit;
   height: inherit;
   overflow: auto;
+  background: #555;
 }
+.marked::-webkit-scrollbar {
+
+    width: 12px;
+}
+
+.marked::-webkit-scrollbar-track {
+    /*-webkit-box-shadow: inset 0 0 6px rgba(100,0,0,1); */
+    /*border-radius: 10px;*/
+}
+
+.marked::-webkit-scrollbar-thumb {
+    /*border-radius: 10px;*/
+    /*-webkit-box-shadow: inset 0 0 6px rgba(100,0,0,1); */
+}
+
+
+
 hr{
   border-style: solid;
   border-color: #333; 

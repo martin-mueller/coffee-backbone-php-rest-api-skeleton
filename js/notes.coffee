@@ -91,26 +91,20 @@ $ ->
 			$('textarea',@el).hide()
 			$m.show()	
 
-
-
 		startDrag: ->
 			@isDragging = true
-			
 
 		stopDrag: (position) ->
 			delay 100, => @isDragging = false
 			@model.set("z-index", @$el.css('z-index'))		
 			@model.set("pos", position)
-
 		
 		startResize: ->
 			@isResizing = true
 			
-
 		stopResize: (size) ->
 			delay 100, => @isResizing = false
 			@model.set("size", size)
-			
 
 		clear: (e) ->
 			@$el.fadeOut 1000, =>
@@ -143,7 +137,7 @@ $ ->
 		
 		addOne: (note) ->
 			noteView = new app.NoteView { model: note, id: "note-" + note.cid }
-			$('#wrapper').append(noteView.el)
+			$('#desk').append(noteView.el)
 			noteView.$el.draggable
 				stack: ".notes"
 				delay: 100
