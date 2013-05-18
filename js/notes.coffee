@@ -60,9 +60,9 @@ $ ->
 			@$el.offset @model.get "pos"
 			@$el.width  @model.get("size").width
 			@$el.height @model.get("size").height
+			# @$el.css 'z-index', @model.get "z-index"
 			# return $el for chaining (?)
 			return @$el
-			# @$el.css 'z-index', @model.get "z"
 
 		enableEdit: (e) ->
 			if not @isDragging and not @isResizing and not app.notes.isLocked
@@ -132,7 +132,8 @@ $ ->
 			"click #toggleEdit"	: "toggleEdit"
 
 		createNote: ->
-			app.notes.create()
+			z = app.notes.last().get("z-index") + 1
+			app.notes.create({ "z-index" : z })
 			
 		
 		addOne: (note) ->
