@@ -83,11 +83,13 @@ $ ->
 			app.notes.editEl = null
 
 		showMarked: ->
+			$m = $('.marked',@el)
 			text_v   = $('textarea',@el).val()
 			marked_v = marked(text_v)
-			$('.marked',@el).html(marked_v)
+			$m.html(marked_v)
 			$('textarea',@el).hide()
-			$('.marked',@el).show()
+			$m.show()	
+
 
 
 		startDrag: ->

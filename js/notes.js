@@ -138,13 +138,14 @@ $(function() {
     };
 
     NoteView.prototype.showMarked = function() {
-      var marked_v, text_v;
+      var $m, marked_v, text_v;
 
+      $m = $('.marked', this.el);
       text_v = $('textarea', this.el).val();
       marked_v = marked(text_v);
-      $('.marked', this.el).html(marked_v);
+      $m.html(marked_v);
       $('textarea', this.el).hide();
-      return $('.marked', this.el).show();
+      return $m.show();
     };
 
     NoteView.prototype.startDrag = function() {
