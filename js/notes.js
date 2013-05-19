@@ -114,15 +114,15 @@ $(function() {
     };
 
     NoteView.prototype.enableEdit = function(e) {
-      if (!this.isDragging && !this.isResizing && !app.notes.isLocked) {
+      if (!this.isDragging && !this.isResizing && !this.collection.isLocked) {
         e.preventDefault();
-        if (app.notes.editEl !== null) {
-          app.notes.editEl.editDone();
+        if (this.collection.editEl !== null) {
+          this.collection.editEl.editDone();
         }
         $('.marked', this.el).hide();
         $('textarea', this.el).show().focus();
         this.oldText = $('textarea', this.el).val();
-        return app.notes.editEl = this;
+        return this.collection.editEl = this;
       }
     };
 
@@ -134,7 +134,7 @@ $(function() {
         this.model.set("text", text);
       }
       this.showMarked();
-      return app.notes.editEl = null;
+      return this.collection.editEl = null;
     };
 
     NoteView.prototype.showMarked = function() {
@@ -199,7 +199,7 @@ $(function() {
     }
 
     DeskView.prototype.initialize = function() {
-      this.listenTo(app.notes, 'add', this.addOne);
+      this.listenTo(this.collection, 'add', this.addOne);
       return marked.setOptions({
         breaks: true
       });
@@ -216,8 +216,8 @@ $(function() {
     DeskView.prototype.createNote = function() {
       var z;
 
-      z = app.notes.last().get("z-index") + 1;
-      return app.notes.create({
+      z = this.collection.last().get("z-index") + 1;
+      return this.collection.create({
         "z-index": z
       });
     };
@@ -226,6 +226,7 @@ $(function() {
       var noteView;
 
       noteView = new app.NoteView({
+        collection: this.collection,
         model: note,
         id: "note-" + note.cid
       });
@@ -252,11 +253,11 @@ $(function() {
     };
 
     DeskView.prototype.toggleEdit = function() {
-      if (app.notes.isLocked) {
-        app.notes.isLocked = false;
+      if (this.collection.isLocked) {
+        this.collection.isLocked = false;
         return $("#toggleEdit span").removeClass("ui-icon-locked").addClass("ui-icon-unlocked");
       } else {
-        app.notes.isLocked = true;
+        this.collection.isLocked = true;
         return $("#toggleEdit span").removeClass("ui-icon-unlocked").addClass("ui-icon-locked");
       }
     };

@@ -40,7 +40,9 @@ route/ method	|   GET    | POST          |   PUT    |   PATCH    |   DELETE
 /:model/        | get all  | n.a.          |not implemented| n.a.| n.a
             
 * replace _:model_ with your model name (plural)
-* replace _:id_ with model id, ( **must be numeric** !)
+* replace _:id_ with model id, ( **must be integer** !)
+* do not send an id on POST, server.php will create it for you and send it in the response body
+* response header code is alway 200 "OK" for now, will add more codes later
 
 ### client side
 
