@@ -34,9 +34,9 @@ url: 'server.php/notes'
 **Routes**
 
 route/ method	|   GET    | POST          |   PUT    |   PATCH    |   DELETE
-------------------|--------------|----------------------|-------------|------
+----------------|----------|---------------|----------|------------|------
 /:model/:id     | get one  |  create one   |update one| update one| delete one
-                       |                 |  sends back id|          |           |
+                |          |  sends back id|          |           |
 /:model/        | get all  | n.a.          |not implemented| n.a.| n.a
             
 * replace _:model_ with your model name (plural)
