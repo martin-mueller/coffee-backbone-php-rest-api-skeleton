@@ -13,9 +13,36 @@
 
 	no database setup, no data structure setup
 
+#### doing requests
 
+* urls for models and collection are the same
+
+_Notes example_  (coffeescript with backbone.js)
+
+````coffeescript
+class app.Note extends Backbone.Model
+urlRoot: 'server.php/notes'
+````
+
+````coffeescript
+class app.Notes extends Backbone.Collection
+url: 'server.php/notes'
+````
+
+* request format is always **application/json**
+
+**Routes**
+
+route/ method	|   GET    | POST          |   PUT    |   PATCH    |   DELETE
+------------------|--------------|----------------------|-------------|------
+/:model/:id     | get one  |  create one   |update one| update one| delete one
+                       |                 |  sends back id|          |           |
+/:model/        | get all  | n.a.          |not implemented| n.a.| n.a
+            
+* replace _:model_ with your model name (plural)
+* replace _:id_ with model id, ( **must be numeric** !)
 
 ### client side
 
-* example coffeescript/ backbone notes app (_index.html + js-Directory + css -dir_)
+* example coffeescript/ backbone notes app ( _index.html + js-Directory + css -dir_ )
 
