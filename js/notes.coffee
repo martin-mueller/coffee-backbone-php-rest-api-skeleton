@@ -65,22 +65,22 @@ $ ->
 			return @$el
 
 		enableEdit: (e) ->
-			if not @isDragging and not @isResizing and not app.notes.isLocked
+			if not @isDragging and not @isResizing and not @collection.isLocked
 				# prevent default in case a link in the marked el was clicked
 				e.preventDefault()
-				if app.notes.editEl isnt null
-					app.notes.editEl.editDone()
+				if @collection.editEl isnt null
+					@collection.editEl.editDone()
 				$('.marked',@el).hide()
 				$('textarea',@el).show().focus()
 				@oldText = $('textarea',@el).val()
-				app.notes.editEl = @
+				@collection.editEl = @
 
 
 		editDone: ->
 			text = $('textarea',@el).val()
 			@model.set("text",text) if text isnt @oldText
 			@showMarked()
-			app.notes.editEl = null
+			@collection.editEl = null
 
 		showMarked: ->
 			$m = $('.marked',@el)
@@ -116,7 +116,7 @@ $ ->
 
 	class app.DeskView extends Backbone.View
 		initialize: ->
-			@listenTo app.notes, 'add', @addOne
+			@listenTo @collection, 'add', @addOne
 			# markdown options
 			marked.setOptions breaks: true
 
@@ -130,13 +130,13 @@ $ ->
 
 		createNote: ->
 			z = 1
-			l = app.notes.last()
+			l = @collection.last()
 			z = l.get("z-index") + 1 if l != undefined
-			app.notes.create({ "z-index" : z })
+			@collection.create({ "z-index" : z })
 			
 		
 		addOne: (note) ->
-			noteView = new app.NoteView { model: note, id: "note-" + note.cid }
+			noteView = new app.NoteView { collection: @collection, model: note, id: "note-" + note.cid }
 			$('#desk').append(noteView.el)
 			noteView.$el.draggable
 				stack: ".notes"
@@ -153,12 +153,12 @@ $ ->
 			noteView.showMarked()
 
 		toggleEdit: ->
-			if app.notes.isLocked 
-				app.notes.isLocked = false;
+			if @collection.isLocked 
+				@collection.isLocked = false;
 				$("#toggleEdit span").removeClass("ui-icon-locked")
 								.addClass("ui-icon-unlocked")
 			else					
-				app.notes.isLocked = true;
+				@collection.isLocked = true;
 				$("#toggleEdit span").removeClass("ui-icon-unlocked")
 								.addClass("ui-icon-locked")
 
