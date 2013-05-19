@@ -35,7 +35,10 @@ $ ->
 	class app.Notes extends Backbone.Collection
 		url: 'server.php/notes'
 		model: app.Note
+		# the collection saves some states of the app here
+		# editEl is set when a note is in edit mode
 		editEl:	null
+		# isLocked is set when editing elements is disabled (lock button of the deskView)
 		isLocked: false
 
 	class app.NoteView extends Backbone.View
@@ -75,13 +78,16 @@ $ ->
 				@oldText = $('textarea',@el).val()
 				@collection.editEl = @
 
-
+		# @editDone
+		# set note model text
+		# hide textarea and render the output
 		editDone: ->
 			text = $('textarea',@el).val()
 			@model.set("text",text) if text isnt @oldText
 			@showMarked()
 			@collection.editEl = null
 
+		# render markdown after create and edit note
 		showMarked: ->
 			$m = $('.marked',@el)
 			text_v   = $('textarea',@el).val()
@@ -91,6 +97,7 @@ $ ->
 			$('textarea',@el).hide()
 			$m.show()	
 
+		# set states on ui events
 		startDrag: ->
 			@isDragging = true
 
@@ -113,7 +120,8 @@ $ ->
 		stopClear: (e) ->
 			@$el.stop().css("opacity","1");
 
-
+	# @class DeskView
+	# manage all noteView elements on visble desktop
 	class app.DeskView extends Backbone.View
 		initialize: ->
 			@listenTo @collection, 'add', @addOne
