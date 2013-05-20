@@ -3,3 +3,5 @@ errors.txt
 log.txt
 *.sqlite
 test/
+coffee-notes.sublime-project
+coffee-notes.sublime-workspace

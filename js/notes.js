@@ -221,7 +221,6 @@ $(function() {
       if (l !== void 0) {
         z = l.get("z-index") + 1;
       }
-      console.log(z);
       return this.collection.create({
         "z-index": z
       });
@@ -235,7 +234,7 @@ $(function() {
         model: note,
         id: "note-" + note.cid
       });
-      $('#wrapper').append(noteView.el);
+      $('#desk').append(noteView.el);
       noteView.$el.draggable({
         stack: ".notes",
         delay: 100,
