@@ -16,7 +16,7 @@ $(function() {
       return _ref;
     }
 
-    Note.prototype.urlRoot = 'server.php/notes';
+    Note.prototype.urlRoot = 'http://localhost/coffee-bb-skel/server.php/notes';
 
     Note.prototype.defaults = {
       "text": "",
@@ -41,8 +41,7 @@ $(function() {
     };
 
     Note.prototype.savePos = function() {
-      console.log(this.get("z-index"));
-      return this.save(this.pos);
+      return console.log(this.save(this.pos));
     };
 
     Note.prototype.saveSize = function() {
@@ -66,7 +65,7 @@ $(function() {
       return _ref1;
     }
 
-    Notes.prototype.url = 'server.php/notes';
+    Notes.prototype.url = 'http://localhost/coffee-bb-skel/server.php/notes';
 
     Notes.prototype.model = app.Note;
 

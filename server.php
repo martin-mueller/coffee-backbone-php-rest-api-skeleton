@@ -1,13 +1,40 @@
 <?php
-/** ## RESTful, Zero- Config Server, stores your models in a sqlite- database
+/** 
+* 
+* ## RESTful, Zero- Config Server, stores your models in a sqlite- database
+*
+*
+* ## TODO: wrap first part in http class (namespace?)
+* * do validations on models ( models.json, db config in json ),
+*   when not in $demo_mode
+* * map models to php classes (alternative db-structures in different classes )
+* * collection post or json - import
+* * HTTP status codes
+*
+*
+*
+*
+*
 * 
 */
+
 /**
  * Put your model names in this array down here
  * @var array
  */
+
+namespace MMs;
+
+
 $allowed_models = array('notes');
 $log	= array();
+
+
+$http = new Http();
+
+
+
+
 $method = $_SERVER['REQUEST_METHOD'];
 $path	= isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
 $input	= file_get_contents('php://input');
@@ -55,9 +82,11 @@ if ($model){
 			break;
 		case 'PUT':
 			if ($valid_data && $id) $result = $modelClass->update($id, $data);
+			if ($result === true) $data['id'] = $id;
 			break;
 		case 'PATCH':
 			if ($valid_data && $id) $result = $modelClass->update($id, $data);
+			if ($result === true) $data['id'] = $id;
 			break;	
 		case 'DELETE':
 			if ($id) $result = $modelClass->delete($id);
@@ -86,6 +115,124 @@ error_log(date('h:i:s').' '.implode(",", $log)."\n" ,3,'log.txt');
 // error_log(date('h:i:s')."| $method | $path | $input \n" ,3,'errors.txt');
 
 
+/**
+* 	
+*/
+class Http 
+{
+	
+	private $defaults = array(
+			'respond_content_type' => 'application/json',
+//TODO: allow chrome console
+			'allowed_client_origins' => array( 
+										'localhost',
+										'127.0.0.2'
+										),
+			'sendback_on_put' => false
+		);
+
+	private $options;
+
+	private $request_method;
+	private $request_content_type;
+	private $errors = array();
+	private $response_headers = array();
+	private $model = '';
+	private $id = null;
+
+
+	function __construct( $options = array() )
+	{
+		$this->options = array_merge($options, $this->defaults );
+		$this->method = $_SERVER['REQUEST_METHOD'];
+		$this->getRequestHeaders();
+		$this->setResponseHeader($this->options['respond_content_type']);
+	}
+
+
+	private function getRequestHeaders(){
+		$headers = apache_request_headers();
+		if ($headers == false) $this->errors[] = 'No valid headers in request';
+		$header_string = '';
+		foreach ($headers as $header => $value) {
+		    $header_string .= "$header: $value\n";
+		}
+		$header_string .= "\n";
+		file_put_contents('headers.txt', $header_string);
+	}
+
+
+
+	public function getRequestData($type = 'json')
+	{
+		return file_get_contents('php://input');
+	}
+
+	public function getRequestPath()
+	{
+		$path	= isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
+		$path  	= trim($path,'/ ');
+		$parts 	= explode('/',$path);
+		$model 	= $parts[0];
+		if (!in_array($model, $allowed_models)){
+ 			$GLOBALS['log'] = "Model $model is not registered";
+ 			$model = null;
+ 		}
+		/* If we have a valid model, check if req contains an id */
+		if ($model && isset($parts[1]) && ctype_digit($parts[1]) && $parts[1] > 0){
+			$id = (int) $parts[1];
+		}
+		else $id = null;
+		return array('model' => $model, 'id' => $id);
+	}
+
+	public function validateRequestData()
+	{
+		# code...
+	}
+
+	public function validateRequestHeader($validate_header_options = array())
+	{
+		# code...
+	}
+
+	public function storeRequestData( $resource, $callbackfunction )
+	{
+		# code...
+	}
+
+
+
+	public function getResponseData($resource, $callbackfunction )
+	{
+		# code...
+	}
+	public function setResponseHeader($key='',$value='')
+	{
+		$this->response_headers[$key] = $value;
+	}
+	public function setResponseData($value='')
+	{
+		# code...
+	}
+
+
+
+	public function putResponse()
+	{
+		if (!empty( $this->response_headers )){
+			foreach ($this->response_headers as $resp_key => $resp_value) {
+				header($key.': '.$value);
+			}
+		}
+	}
+}/* end of class MMs\Http */
+
+
+
+
+
+
 /* ## Simple db class with a bit of JSON remapping yet, we call it model */
 
 class Model{
@@ -103,7 +250,7 @@ class Model{
 
 		$this->model = $this->table = $name;
 		try{
-			$this->db = new PDO('sqlite:models.sqlite');
+			$this->db = new \PDO('sqlite:models.sqlite');
 		}
 		catch (PDOException $e) {
 		   $GLOBALS['log'][] = 'Connection failed: ' . $e->getMessage();
@@ -128,7 +275,7 @@ class Model{
 		$stmt = $this->db->prepare("INSERT INTO {$this->table} (id, key, value) VALUES (:id, :key, :value)");
 		$stmt->bindParam(':key', $key);
 		$stmt->bindParam(':value', $value);
-		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		$stmt->bindParam(':id', $id, \PDO::PARAM_INT);
 		$id = $this->createId();
 		// var_dump($stmt);
 		$result = true;
@@ -155,7 +302,7 @@ class Model{
 		$stmt = $this->db->prepare("INSERT OR REPLACE INTO {$this->table} (id, key, value) VALUES (:id,:key,:value) ");
 		$stmt->bindParam(':key', $key);
 		$stmt->bindParam(':value', $value);
-		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		$stmt->bindParam(':id', $id, \PDO::PARAM_INT);
 		// var_dump($stmt);
 		$result = true;
 		foreach ($data as $key => $value) {
@@ -174,7 +321,7 @@ class Model{
 	 */
 	public function delete($id){
 		$stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id=:id");
-		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		$stmt->bindParam(':id', $id, \PDO::PARAM_INT);
 		$GLOBALS['log'][] = "DELETE $this->model: $id";
 		// var_dump($stmt);
 		return $stmt->execute();
@@ -187,9 +334,9 @@ class Model{
 
 	public function get($id){
 		$stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id=:id");
-		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		$stmt->bindParam(':id', $id, \PDO::PARAM_INT);
 		$stmt->execute();
-		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		$result = $this->convertData($rows);
 		$GLOBALS['log'][] = "GET $this->model: $id";
 		return $result;
@@ -202,7 +349,7 @@ class Model{
 	public function getAll(){
 		$stmt = $this->db->prepare("SELECT id, * FROM {$this->table} ORDER BY id");
 		$stmt->execute();
-		$models = $stmt->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
+		$models = $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_ASSOC);
 		if (is_array($models) && !empty($models)){
 			foreach ($models as $key=>$model) {
 				$result[] = $this->convertData($model);

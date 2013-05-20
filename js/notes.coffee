@@ -1,7 +1,7 @@
 app = app || {}
 $ ->
 	class app.Note extends Backbone.Model
-		urlRoot: 'server.php/notes'
+		urlRoot: 'http://localhost/coffee-bb-skel/server.php/notes'
 
 		defaults:
 			"text": ""
@@ -17,11 +17,12 @@ $ ->
 			@on "change:pos", @savePos
 			@on "change:size", @saveSize
 			@on "change:text", @saveText
+			# @on "sync", (model, resp, options) -> console.log options.xhr
 			@on "all", (e) -> console.log "Note event:" + e
 
 		savePos: ->
-			console.log @get("z-index")
-			@save @pos
+			# console.log @get("z-index")
+			console.log @save @pos
 
 		saveSize: ->
 			@save @size
@@ -33,7 +34,7 @@ $ ->
 			# if validate returns anything, save will not be executed
 
 	class app.Notes extends Backbone.Collection
-		url: 'server.php/notes'
+		url: 'http://localhost/coffee-bb-skel/server.php/notes'
 		model: app.Note
 		# the collection saves some states of the app here
 		# editEl is set when a note is in edit mode
