@@ -44,6 +44,12 @@ route/ method	|   GET    | POST          |   PUT    |   PATCH    |   DELETE
 * do not send an id on POST, server.php will create it for you and send it in the response body
 * response header code is alway 200 "OK" for now, will add more codes later
 
+#### logging
+
+requests are logged into log.txt , so take a look what's going on!
+
+
+
 ### client side
 
 * example coffeescript/ backbone notes app ( _index.html + js-Directory + css -dir_ )

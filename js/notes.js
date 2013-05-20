@@ -214,9 +214,14 @@ $(function() {
     };
 
     DeskView.prototype.createNote = function() {
-      var z;
+      var l, z;
 
-      z = this.collection.last().get("z-index") + 1;
+      z = 1;
+      l = this.collection.last();
+      if (l !== void 0) {
+        z = l.get("z-index") + 1;
+      }
+      console.log(z);
       return this.collection.create({
         "z-index": z
       });

@@ -134,7 +134,9 @@ $ ->
 			"click #toggleEdit"	: "toggleEdit"
 
 		createNote: ->
-			z = @collection.last().get("z-index") + 1
+			z = 1
+			l = @collection.last()
+			z = l.get("z-index") + 1 if l != undefined
 			@collection.create({ "z-index" : z })
 			
 		
