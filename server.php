@@ -1,6 +1,10 @@
 <?php
 /** 
-* 
+*
+*
+* @package  MMs php REST api
+* @author  Martin Müller github.com/martin-mueller
+* @version  0.2
 * ## RESTful, Zero- Config Server, stores your models in a sqlite- database
 *
 *
@@ -12,10 +16,6 @@
 * * HTTP status codes
 *
 *
-*
-*
-*
-* 
 */
 
 /**
@@ -28,9 +28,16 @@ namespace MMs;
 
 $allowed_models = array('notes');
 $log	= array();
+$debug	= true;
 
+if ($debug === true){
+	require_once 'api/lib/PhpConsole.php';
+	\PhpConsole::start();
+}
 
-$http = new Http();
+$http = new Http($options = array(
+		'allowed_models'=>array('notes'))
+);
 
 
 
@@ -126,26 +133,30 @@ class Http
 //TODO: allow chrome console
 			'allowed_client_origins' => array( 
 										'localhost',
-										'127.0.0.2'
+										'127.0.0.1'
 										),
+			'allowed_models' => array(),
 			'sendback_on_put' => false
 		);
 
 	private $options;
 
 	private $request_method;
-	private $request_content_type;
+	private $request_content_type = 'application/json';
+	private $request_body = '';
 	private $errors = array();
 	private $response_headers = array();
-	private $model = '';
+	private $response_body = array();
+	private $model = null;
 	private $id = null;
 
 
-	function __construct( $options = array() )
+	public function __construct( $options = array() )
 	{
-		$this->options = array_merge($options, $this->defaults );
-		$this->method = $_SERVER['REQUEST_METHOD'];
+		$this->options = array_merge($this->defaults, $options);
+		$this->request_method = $_SERVER['REQUEST_METHOD'];
 		$this->getRequestHeaders();
+		$this->parseRequestPath();
 		$this->setResponseHeader($this->options['respond_content_type']);
 	}
 
@@ -159,36 +170,47 @@ class Http
 		}
 		$header_string .= "\n";
 		file_put_contents('headers.txt', $header_string);
+		return $headers;
 	}
 
 
-
-	public function getRequestData($type = 'json')
+	/**
+	 * get the input
+	 * @param  string $type [description]
+	 * @return [type]       [description]
+	 */
+	public function getRequestBody($type = 'json')
 	{
 		return file_get_contents('php://input');
 	}
 
-	public function getRequestPath()
+	/**
+	 * parse path, check for valid model and id
+	 * @return array $model and id
+	 */
+	private function parseRequestPath()
 	{
 		$path	= isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
 		$path  	= trim($path,'/ ');
 		$parts 	= explode('/',$path);
 		$model 	= $parts[0];
-		if (!in_array($model, $allowed_models)){
- 			$GLOBALS['log'] = "Model $model is not registered";
+		debug($this->options['allowed_models']);
+		if (!in_array($model, $this->options['allowed_models'])){
+ 			$GLOBALS['log'][] = "Model $model is not registered";
  			$model = null;
  		}
+ 		else $this->model = $model;
 		/* If we have a valid model, check if req contains an id */
 		if ($model && isset($parts[1]) && ctype_digit($parts[1]) && $parts[1] > 0){
-			$id = (int) $parts[1];
+			$this->id = (int) $parts[1];
 		}
-		else $id = null;
-		return array('model' => $model, 'id' => $id);
+		else $this->id = null;
+		return array('model' => $this->model, 'id' => $this->id);
 	}
 
 	public function validateRequestData()
 	{
-		# code...
+		
 	}
 
 	public function validateRequestHeader($validate_header_options = array())
@@ -196,14 +218,14 @@ class Http
 		# code...
 	}
 
-	public function storeRequestData( $resource, $callbackfunction )
+	public function storeRequestData($resource, $callbackfunction)
 	{
 		# code...
 	}
 
 
 
-	public function getResponseData($resource, $callbackfunction )
+	public function getResponseData($resource, $callbackfunction)
 	{
 		# code...
 	}
@@ -211,7 +233,7 @@ class Http
 	{
 		$this->response_headers[$key] = $value;
 	}
-	public function setResponseData($value='')
+	public function setResponseBody($data)
 	{
 		# code...
 	}
@@ -224,6 +246,11 @@ class Http
 			foreach ($this->response_headers as $resp_key => $resp_value) {
 				header($key.': '.$value);
 			}
+		}
+		else $GLOBALS['log'][] = 'No response headers set';
+		if (!empty( $this->response_body )){
+			echo $this->response_body;
+
 		}
 	}
 }/* end of class MMs\Http */
@@ -396,3 +423,12 @@ class Model{
  		return (json_last_error() == JSON_ERROR_NONE);
 	}
 }	
+
+
+function debug($message, $tags = 'debug') {
+	if ($GLOBALS['debug'] === true)
+		if (is_array($message))
+			$message =var_export($message, true);
+		\PhpConsole::debug($message, $tags);
+	return false;
+}
