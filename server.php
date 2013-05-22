@@ -140,15 +140,20 @@ class Http
 		);
 
 	private $options;
-
+	/* request properties */
 	private $request_method;
 	private $request_content_type = 'application/json';
 	private $request_body = '';
 	private $errors = array();
+	
+	/* response properties */
 	private $response_headers = array();
 	private $response_body = array();
+	
+	/* model properties */
 	private $model = null;
 	private $id = null;
+	private $model_data;
 
 
 	public function __construct( $options = array() )
@@ -179,7 +184,7 @@ class Http
 	 * @param  string $type [description]
 	 * @return [type]       [description]
 	 */
-	public function getRequestBody($type = 'json')
+	public function getRequestBody()
 	{
 		return file_get_contents('php://input');
 	}
@@ -208,9 +213,26 @@ class Http
 		return array('model' => $this->model, 'id' => $this->id);
 	}
 
-	public function validateRequestData()
+	public function parseRequestData($type = 'application/json')
 	{
-		
+		if ( $type == 'application/json'){
+			$this->model_data = $this->parseJson( $this->request_body );
+		}
+		else $GLOBALS['log'][] = 'only json data accepted for now';
+	}
+
+	public function parseJson($input)
+	{
+		if ($input > '' ){
+			$data = json_decode($input, true);
+			$e = json_last_error();
+			if ($e != JSON_ERROR_NONE) $log[]='json decoding error:'.$e;
+		}
+		$valid_data = (isset($data) && is_array($data) && !empty($data));
+
+		/* unset id from data since we got it from url, if any */
+		if ($valid_data && array_key_exists('id', $data)) unset($data['id']);
+		return $data;
 	}
 
 	public function validateRequestHeader($validate_header_options = array())
