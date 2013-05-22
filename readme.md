@@ -1,5 +1,6 @@
 # Simple coffeescript backbone.js example app with php-REST api
 
+![alt=screenshot](http://decentweb.de/assets/images/cardBoard.png)
 ## description
 
 ### server side (file: server.php)
