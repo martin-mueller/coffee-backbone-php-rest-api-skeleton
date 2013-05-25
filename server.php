@@ -142,6 +142,7 @@ class Http
 	private $options;
 	/* request properties */
 	private $request_method;
+	private $request_headers = array();
 	private $request_content_type = 'application/json';
 	private $request_body = '';
 	private $errors = array();
@@ -169,12 +170,8 @@ class Http
 	private function getRequestHeaders(){
 		$headers = apache_request_headers();
 		if ($headers == false) $this->errors[] = 'No valid headers in request';
-		$header_string = '';
-		foreach ($headers as $header => $value) {
-		    $header_string .= "$header: $value\n";
-		}
-		$header_string .= "\n";
-		file_put_contents('headers.txt', $header_string);
+		$this->request_headers = $headers;
+		file_put_contents('headers.txt', var_export($headers, true));
 		return $headers;
 	}
 
@@ -217,8 +214,10 @@ class Http
 	{
 		if ( $type == 'application/json'){
 			$this->model_data = $this->parseJson( $this->request_body );
+			return $this->model_data;
 		}
-		else $GLOBALS['log'][] = 'only json data accepted for now';
+		$GLOBALS['log'][] = 'only json data accepted for now';
+		return false;
 	}
 
 	public function parseJson($input)
@@ -450,7 +449,7 @@ class Model{
 function debug($message, $tags = 'debug') {
 	if ($GLOBALS['debug'] === true)
 		if (is_array($message))
-			$message =var_export($message, true);
+			$message = var_export($message, true);
 		\PhpConsole::debug($message, $tags);
 	return false;
 }

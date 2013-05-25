@@ -1,14 +1,14 @@
-Host: localhost
-Connection: keep-alive
-Content-Length: 130
-Accept: application/json, text/javascript, */*; q=0.01
-Origin: http://localhost
-X-Requested-With: XMLHttpRequest
-User-Agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.63 Safari/537.31
-Content-Type: application/json
-Referer: http://localhost/coffee-bb-skel/
-Accept-Encoding: gzip,deflate,sdch
-Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
-Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
-Cookie: phpcsls=4; phpcslc=4
-
+array (
+  'Host' => 'localhost',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '94',
+  'Accept' => 'application/json, text/javascript, */*; q=0.01',
+  'Origin' => 'http://localhost',
+  'X-Requested-With' => 'XMLHttpRequest',
+  'User-Agent' => 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Referer' => 'http://localhost/coffee-bb-skel/index.html',
+  'Accept-Encoding' => 'gzip,deflate,sdch',
+  'Accept-Language' => 'de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4',
+  'Cookie' => 'phpcsls=4; phpcslc=4',
+)
