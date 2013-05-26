@@ -8,5 +8,5 @@ $(function() {
   app.deskView = new app.DeskView({
     collection: app.widgets
   });
-  return app.widgets.reset(app.data);
+  return app.widgets.fetch();
 });

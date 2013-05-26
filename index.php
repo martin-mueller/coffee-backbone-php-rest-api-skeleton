@@ -10,8 +10,8 @@
 <body>
 <div id="wrapper">
 	<div id="controls">
-			<button id="add" title="add a new note"><span class="ui-icon ui-icon-plus"></span></button>
-			<button id="toggleEdit" title="toggle edit lock"><span class="ui-icon ui-icon-unlocked"></span></button>
+		<button id="add" title="add a new note"><span class="ui-icon ui-icon-plus"></span></button>
+		<button id="toggleEdit" title="toggle edit lock"><span class="ui-icon ui-icon-unlocked"></span></button>
 		<button id="help" title="faq"><span class="ui-icon ui-icon-help"></span></button>
 		<button id="upLoadImage"><span class="ui-icon ui-icon-image "></span></button>
 		<button id="trash"><span class="ui-icon ui-icon-trash "></span></button>
@@ -28,7 +28,7 @@
 </div>
 	<script>
 		var app = app || {};
-		app.data = <?php echo file_get_contents('http://localhost/coffee-bb-skel/server.php/notes/')?>;
+		app.data = <?php echo file_get_contents('http://'.$_SERVER['SERVER_NAME'].'/'.dirname($_SERVER['REQUEST_URI']).'/server.php/notes/')?>;
 	</script>
 
 	<script type="text/javascript" src="js/lib/jquery.js"></script>

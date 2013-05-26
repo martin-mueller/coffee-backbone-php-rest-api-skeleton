@@ -26,8 +26,7 @@ $(function() {
 
     WidgetView.prototype.events = {
       "mousedown .close": "clear",
-      "mouseup .close": "stopClear",
-      "reset": "render"
+      "mouseup .close": "stopClear"
     };
 
     WidgetView.prototype.initialize = function() {
@@ -109,15 +108,8 @@ $(function() {
   app.WidgetFactory = (function() {
     function WidgetFactory() {}
 
-    WidgetFactory.prototype.buildModel = function(type, params) {
-      switch (type) {
-        case "note":
-          return new app.Note(params);
-      }
-    };
-
-    WidgetFactory.prototype.buildView = function(type, params) {
-      switch (type) {
+    WidgetFactory.prototype.buildView = function(params) {
+      switch (params.type) {
         case "note":
           return new app.NoteView(params);
       }
@@ -134,11 +126,18 @@ $(function() {
       return _ref1;
     }
 
-    NoteView.prototype.events = {
-      "click .marked": "enableEdit",
-      "focusout": "editDone",
-      "mousedown .close": "clear",
-      "mouseup .close": "stopClear"
+    NoteView.prototype.initialize = function() {
+      NoteView.__super__.initialize.call(this);
+      return marked.setOptions({
+        breaks: true
+      });
+    };
+
+    NoteView.prototype.events = function() {
+      return _.extend({}, app.WidgetView.prototype.events, {
+        "click .marked": "enableEdit",
+        "focusout": "editDone"
+      });
     };
 
     NoteView.prototype.render = function() {
@@ -194,10 +193,8 @@ $(function() {
 
     DeskView.prototype.initialize = function() {
       this.listenTo(this.collection, 'add', this.addOne);
-      marked.setOptions({
-        breaks: true
-      });
-      return this.listenTo(this.collection, 'reset', this.addAll);
+      this.listenTo(this.collection, 'reset', this.addAll);
+      return this.widgetFactory = new app.WidgetFactory();
     };
 
     DeskView.prototype.el = '#wrapper';
@@ -205,8 +202,7 @@ $(function() {
     DeskView.prototype.events = {
       "click #add": "create",
       "add": "addOne",
-      "click #toggleEdit": "toggleEdit",
-      "reset": "addAll"
+      "click #toggleEdit": "toggleEdit"
     };
 
     DeskView.prototype.create = function() {
@@ -224,12 +220,10 @@ $(function() {
     };
 
     DeskView.prototype.addOne = function(widget) {
-      var type, wf, widgetView;
+      var type, widgetView;
 
-      console.log(this.collection);
-      wf = new app.WidgetFactory();
       type = "note";
-      return widgetView = wf.buildView(type, {
+      return widgetView = this.widgetFactory.buildView({
         type: type,
         collection: this.collection,
         model: widget,

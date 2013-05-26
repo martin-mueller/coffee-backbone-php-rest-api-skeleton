@@ -8,9 +8,7 @@ $ ->
 
 		events:
 			"mousedown .close"	: "clear"
-			"mouseup .close"	: "stopClear"
-			"reset"				: "render"
-			
+			"mouseup .close"	: "stopClear"			
 		
 		initialize: ->
 			@listenTo @model, 'destroy', @remove
@@ -65,24 +63,25 @@ $ ->
 
 
 	class app.WidgetFactory
-		buildModel: (type, params) ->
-			switch type
-				when "note" then new app.Note params	
-
-		buildView: (type, params) ->
-			switch type
-				when "note" then new app.NoteView params	
+		buildView: (params) ->
+			switch params.type
+				when "note" then new app.NoteView params
 
 
 		
 
 	class app.NoteView extends app.WidgetView
-		
-		events:
+		initialize: ->
+			super()
+						# markdown options
+			marked.setOptions breaks: true
+
+
+		events: ->
+			_.extend {}, app.WidgetView.prototype.events,
+
 			"click .marked"		: "enableEdit"
 			"focusout"			: "editDone"
-			"mousedown .close"	: "clear"
-			"mouseup .close"	: "stopClear"
 
 
 		render: ->	
@@ -125,12 +124,9 @@ $ ->
 	# manage all noteView elements on visble desktop
 	class app.DeskView extends Backbone.View
 		initialize: ->
-			
 			@listenTo @collection, 'add', @addOne
-			# markdown options
-			marked.setOptions breaks: true
 			@listenTo @collection, 'reset', @addAll
-
+			@widgetFactory = new app.WidgetFactory()
 
 		el: '#wrapper'
 
@@ -138,7 +134,6 @@ $ ->
 			"click #add"		: "create"
 			"add"				: "addOne"
 			"click #toggleEdit"	: "toggleEdit"
-			"reset"				: "addAll"
 
 
 		create: ->
@@ -149,10 +144,9 @@ $ ->
 			
 		
 		addOne: (widget) ->
-			console.log @collection
-			wf = new app.WidgetFactory()
+			
 			type = "note"
-			widgetView = wf.buildView type, { type: type, collection: @collection, model: widget, id: "note-" + widget.cid } 
+			widgetView = @widgetFactory.buildView { type: type, collection: @collection, model: widget, id: "note-" + widget.cid } 
 		
 		addAll: (collection) ->
 			_.each collection.models, @addOne, @
