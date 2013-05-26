@@ -16,7 +16,8 @@ class HttpService
 
 	private static function setResponse()
 	{
-		self::$request = $request;
+		self::$response = $response;
+	}
 
 
 	public static function run($request, $response, $callback_function, $arguments)

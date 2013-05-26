@@ -4,9 +4,9 @@ var app;
 app = app || {};
 
 $(function() {
-  app.notes = new app.Notes();
+  app.widgets = new app.Widgets();
   app.deskView = new app.DeskView({
-    collection: app.notes
+    collection: app.widgets
   });
-  return app.notes.fetch();
+  return app.widgets.reset(app.data);
 });
