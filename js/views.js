@@ -32,16 +32,35 @@ $(function() {
 
     WidgetView.prototype.initialize = function() {
       this.listenTo(this.model, 'destroy', this.remove);
-      this.listenTo(this.model, 'change', this.render);
       return this.render();
     };
 
     WidgetView.prototype.render = function() {
+      var _this = this;
+
       this.$el.html(this.template(this.model.toJSON()));
       this.$el.offset(this.model.get("pos"));
       this.$el.width(this.model.get("size").width);
       this.$el.height(this.model.get("size").height);
-      $('#desk').append(el);
+      $('#desk').append(this.el);
+      this.$el.draggable({
+        stack: ".notes",
+        delay: 100,
+        start: function(event, ui) {
+          return _this.startDrag();
+        },
+        stop: function(event, ui) {
+          return _this.stopDrag(ui.position);
+        }
+      });
+      this.$el.resizable({
+        start: function(event, ui) {
+          return _this.startResize();
+        },
+        stop: function(event, ui) {
+          return _this.stopResize(ui.size);
+        }
+      });
       return this.$el;
     };
 
@@ -122,6 +141,11 @@ $(function() {
       "mouseup .close": "stopClear"
     };
 
+    NoteView.prototype.render = function() {
+      NoteView.__super__.render.call(this);
+      return this.showMarked();
+    };
+
     NoteView.prototype.enableEdit = function(e) {
       if (!this.isDragging && !this.isResizing && !this.collection.isLocked) {
         e.preventDefault();
@@ -170,9 +194,10 @@ $(function() {
 
     DeskView.prototype.initialize = function() {
       this.listenTo(this.collection, 'add', this.addOne);
-      return marked.setOptions({
+      marked.setOptions({
         breaks: true
       });
+      return this.listenTo(this.collection, 'reset', this.addAll);
     };
 
     DeskView.prototype.el = '#wrapper';
@@ -180,7 +205,8 @@ $(function() {
     DeskView.prototype.events = {
       "click #add": "create",
       "add": "addOne",
-      "click #toggleEdit": "toggleEdit"
+      "click #toggleEdit": "toggleEdit",
+      "reset": "addAll"
     };
 
     DeskView.prototype.create = function() {
@@ -200,33 +226,19 @@ $(function() {
     DeskView.prototype.addOne = function(widget) {
       var type, wf, widgetView;
 
+      console.log(this.collection);
       wf = new app.WidgetFactory();
       type = "note";
-      widgetView = wf.buildView(type, {
+      return widgetView = wf.buildView(type, {
         type: type,
         collection: this.collection,
         model: widget,
         id: "note-" + widget.cid
       });
-      widgetView.$el.draggable({
-        stack: ".notes",
-        delay: 100,
-        start: function(event, ui) {
-          return widgetView.startDrag();
-        },
-        stop: function(event, ui) {
-          return widgetView.stopDrag(ui.position);
-        }
-      });
-      widgetView.$el.resizable({
-        start: function(event, ui) {
-          return widgetView.startResize();
-        },
-        stop: function(event, ui) {
-          return widgetView.stopResize(ui.size);
-        }
-      });
-      return widgetView.showMarked();
+    };
+
+    DeskView.prototype.addAll = function(collection) {
+      return _.each(collection.models, this.addOne, this);
     };
 
     DeskView.prototype.toggleEdit = function() {

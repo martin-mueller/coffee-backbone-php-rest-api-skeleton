@@ -14,7 +14,7 @@ $ ->
 		
 		initialize: ->
 			@listenTo @model, 'destroy', @remove
-			@listenTo @model, 'change', @render
+			# @listenTo @model, 'change', @render
 			@render()
 
 		render: ->
@@ -24,7 +24,19 @@ $ ->
 			@$el.height @model.get("size").height
 			# @$el.css 'z-index', @model.get "z-index"
 			# return $el for chaining (?)
-			$('#desk').append(el)
+			$('#desk').append(@el)
+			@$el.draggable
+				stack: ".notes"
+				delay: 100
+				start: (event, ui) =>
+					@startDrag()
+				stop:  (event, ui) =>
+					@stopDrag ui.position
+			@$el.resizable
+				start: (event, ui) =>
+					@startResize()
+				stop:  (event, ui) =>
+					@stopResize ui.size
 			return @$el
 
 		
@@ -71,7 +83,11 @@ $ ->
 			"focusout"			: "editDone"
 			"mousedown .close"	: "clear"
 			"mouseup .close"	: "stopClear"
-			
+
+
+		render: ->	
+			super()
+			@showMarked()
 
 		enableEdit: (e) ->
 			if not @isDragging and not @isResizing and not @collection.isLocked
@@ -109,9 +125,11 @@ $ ->
 	# manage all noteView elements on visble desktop
 	class app.DeskView extends Backbone.View
 		initialize: ->
+			
 			@listenTo @collection, 'add', @addOne
 			# markdown options
 			marked.setOptions breaks: true
+			@listenTo @collection, 'reset', @addAll
 
 
 		el: '#wrapper'
@@ -120,6 +138,8 @@ $ ->
 			"click #add"		: "create"
 			"add"				: "addOne"
 			"click #toggleEdit"	: "toggleEdit"
+			"reset"				: "addAll"
+
 
 		create: ->
 			z = 1
@@ -129,23 +149,13 @@ $ ->
 			
 		
 		addOne: (widget) ->
+			console.log @collection
 			wf = new app.WidgetFactory()
 			type = "note"
 			widgetView = wf.buildView type, { type: type, collection: @collection, model: widget, id: "note-" + widget.cid } 
 		
-			widgetView.$el.draggable
-				stack: ".notes"
-				delay: 100
-				start: (event, ui) ->
-					widgetView.startDrag()
-				stop:  (event, ui) ->
-					widgetView.stopDrag ui.position
-			widgetView.$el.resizable
-				start: (event, ui) ->
-					widgetView.startResize()
-				stop:  (event, ui) ->
-					widgetView.stopResize ui.size
-			widgetView.showMarked()
+		addAll: (collection) ->
+			_.each collection.models, @addOne, @
 
 		toggleEdit: ->
 			if @collection.isLocked 
