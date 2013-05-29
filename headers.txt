@@ -1,14 +1,10 @@
 array (
   'Host' => 'localhost',
   'Connection' => 'keep-alive',
-  'Content-Length' => '94',
-  'Accept' => 'application/json, text/javascript, */*; q=0.01',
-  'Origin' => 'http://localhost',
-  'X-Requested-With' => 'XMLHttpRequest',
+  'Cache-Control' => 'no-cache',
   'User-Agent' => 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36',
-  'Content-Type' => 'application/json',
-  'Referer' => 'http://localhost/coffee-bb-skel/index.html',
+  'Accept' => '*/*',
   'Accept-Encoding' => 'gzip,deflate,sdch',
   'Accept-Language' => 'de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4',
-  'Cookie' => 'phpcsls=4; phpcslc=4',
+  'Cookie' => 'PHPSESSID=m8p4l3sgeaf347d9ipl0lmf7v2',
 )
