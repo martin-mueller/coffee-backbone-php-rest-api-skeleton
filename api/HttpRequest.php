@@ -1,9 +1,10 @@
 <?php 
-
+// namespace MMs;
 abstract class HttpRequest{
 	
 	protected $errors = array();
 
+    protected static $method = 'GET';
 	protected static $headers = array();
 	protected static $body	= '';
 	protected $data = array();
@@ -14,6 +15,7 @@ abstract class HttpRequest{
 	static function init(){
 		self::setHeaders();
 		self::setBody();
+		self::$method  = $_SERVER['REQUEST_METHOD'];
 		self::$is_init = true;
 	}
 
@@ -26,6 +28,10 @@ abstract class HttpRequest{
 		return false;
 	}
 
+	static public function getMethod(){
+		return self::$method;
+	}
+	
 	static public function getHeaders($key = null){
 		if (isset($key)){
 			$key = strtolower($key);
@@ -49,6 +55,13 @@ abstract class HttpRequest{
 		return self::$headers;
 	}
 	
+	static public function getPath(){
+		$path	= isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
+		$path  	= trim($path,'/ ');
+		$parts 	= explode('/',$path);
+		return $parts;
+	}
+
 	protected static function setBody(){
 		self::$body = file_get_contents('php://input');
 	}
@@ -80,9 +93,3 @@ class HttpRequestJson extends HttpRequest{
 
 }
 
-HttpRequest::init();
-$req = HttpRequest::factory('json');
-// print_r ($req::getHeaders());
-// echo $req::getHeaders('Content-Type');
-// echo $req::getHeaders('Accept-Encoding');
-var_dump($req->getData());

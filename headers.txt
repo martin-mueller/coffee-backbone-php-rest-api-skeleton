@@ -1,10 +1,10 @@
 array (
   'Host' => 'localhost',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0',
+  'Accept' => 'application/json, text/javascript, */*; q=0.01',
+  'Accept-Language' => 'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Referer' => 'http://decentweb.de/zettel5/',
+  'Origin' => 'http://decentweb.de',
   'Connection' => 'keep-alive',
-  'Cache-Control' => 'no-cache',
-  'User-Agent' => 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36',
-  'Accept' => '*/*',
-  'Accept-Encoding' => 'gzip,deflate,sdch',
-  'Accept-Language' => 'de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4',
-  'Cookie' => 'PHPSESSID=m8p4l3sgeaf347d9ipl0lmf7v2',
 )
