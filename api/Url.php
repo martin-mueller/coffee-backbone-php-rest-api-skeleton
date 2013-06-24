@@ -1,6 +1,5 @@
 <?php
 namespace MMs;
-if (!defined('APP_ROOT')) die('direct access not allowed');
 
 class Url{
 
@@ -31,7 +30,7 @@ class Url{
 
 	public static function rawPath(){
 		if (self::$rawPath === false){
-			self::$path();
+			self::path();
 		}
 		return self::$rawPath;
 	}

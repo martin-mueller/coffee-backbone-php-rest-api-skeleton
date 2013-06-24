@@ -32,7 +32,7 @@ class Router{
 			$method = $path_a[0];
 		}
 		else $method = 'GET';
-		$path = trail_slash($path);
+		$path = rtrim($path,'/').'/';
 		$path = '%'.$path.'%';
 		self::$routes[$path] = array($method, $callback);
 	}
@@ -56,7 +56,7 @@ class Router{
 		$params = array();
 		foreach (self::$routes as $path=>$route) {
 
-			$test = preg_match($path, trail_slash(Url::rawPath()), $matches);
+			$test = preg_match($path, rtrim(Url::rawPath(),'/').'/', $matches);
 			/**
 			 * if Url matches route- path:
 			 *  - collect named Parameters from route
