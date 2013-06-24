@@ -1,10 +1,10 @@
 <?php
+namespace MMs;
 /* ## Simple db class with a bit of JSON remapping yet, we call it model */
 // namespace MMs;
-class Model{
+class SimpleModelStore{
 
 	private $model;
-	private $id;
 	private $table;
 	private $db;
 
@@ -13,9 +13,8 @@ class Model{
 	 * @param string $name the model(collection) name (plural) = db- table
 	 */
 
-	public function __construct($name, $id){
-		$this->id    = $id
-;		$this->model = $this->table = $name;
+	public function __construct($name){
+		$this->model = $this->table = $name;
 		try{
 			$this->db = new \PDO('sqlite:models.sqlite');
 		}

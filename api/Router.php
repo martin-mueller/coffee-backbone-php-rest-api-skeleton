@@ -26,15 +26,10 @@ class Router{
 	public static function set($path, $callback ){
 		//remove multiple whitespaces
 		$path = preg_replace('%\s{2,}%'," ",$path);
-		$path_a = explode(' ', $path);
-		if (count($path_a) == 2 && in_array($path_a[0], self::$allowed_methods)){
-			$path   = $path_a[1];
-			$method = $path_a[0];
-		}
-		else $method = 'GET';
+		
 		$path = rtrim($path,'/').'/';
-		$path = '%'.$path.'%';
-		self::$routes[$path] = array($method, $callback);
+	
+		self::$routes[$path] = $callback;
 	}
 
 	/**
@@ -54,31 +49,37 @@ class Router{
 		}
 		$test = false;
 		$params = array();
-		foreach (self::$routes as $path=>$route) {
-
+		echo "<pre>"; print_r(self::$routes);
+		foreach (self::$routes as $path=>$callback) {
+			$path_a = explode(' ', $path);
+			if (count($path_a) == 2 && in_array($path_a[0], self::$allowed_methods)){
+				$path   = $path_a[1];
+				$method = $path_a[0];
+			}
+			else $method = 'GET';
+			$path = '%'.$path.'%';
 			$test = preg_match($path, rtrim(Url::rawPath(),'/').'/', $matches);
+
 			/**
 			 * if Url matches route- path:
 			 *  - collect named Parameters from route
 			 *  - call Callback- function with parameters
 			 *  - done
 			 */
-			$method = $route[0];
 			if (!empty($matches) && $method == Request::getMethod()){
-				$callback = $route[1];
 				foreach($matches as $key=>$match){
 					if (!ctype_digit((string) $key)){
 						$params[$key] = $match;  
 					}
 				}
 				self::$params = $params;
-				$callback = __NAMESPACE__.'\\'.$callback;
+				if (!is_callable($callback)) $callback = __NAMESPACE__.'\\'.$callback;
 				if (!is_callable($callback)){
 					throw new \Exception('Unknown callback function: '.$callback);
 				}
 				// print_r($params);
-				call_user_func_array ($callback, $params);
-				break;
+				return call_user_func_array ($callback, $params);
+				// break;
 			}	
 		}
 	}
