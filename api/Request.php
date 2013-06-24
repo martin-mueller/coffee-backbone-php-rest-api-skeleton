@@ -1,6 +1,6 @@
 <?php 
-// namespace MMs;
-abstract class HttpRequest{
+namespace MMs;
+abstract class Request{
 	
 	protected $errors = array();
 
@@ -22,13 +22,14 @@ abstract class HttpRequest{
 
 	static function factory($type){
 		if (!self::$is_init) self::init();
-		$classname = 'HttpRequest'.ucfirst($type);
+		$classname = __NAMESPACE__.'\Request'.ucfirst($type);
 		if (class_exists($classname))
 			return new $classname;
 		return false;
 	}
 
 	static public function getMethod(){
+		if (!self::$is_init) self::init();
 		return self::$method;
 	}
 	
@@ -55,11 +56,9 @@ abstract class HttpRequest{
 		return self::$headers;
 	}
 	
-	static public function getPath(){
-		$path	= isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
-		$path  	= trim($path,'/ ');
-		$parts 	= explode('/',$path);
-		return $parts;
+	static public function getPath($key){
+				return Url::path($key);
+
 	}
 
 	protected static function setBody(){
@@ -68,28 +67,6 @@ abstract class HttpRequest{
 
 	public function getData(){}
 	
-
-}
-
-class HttpRequestJson extends HttpRequest{
-
-	public function __construct(){
-		$this->setData(self::$body);
-	}
-
-	/**
-	 * getter for request data
-	 * @return array data array
-	 */
-	public function getData(){
-		return $this->data;
-	}
-
-	private function setData($input){
-		if (!empty($input)){
-			$this->data = json_decode($input, true);
-		}
-	}
 
 }
 
