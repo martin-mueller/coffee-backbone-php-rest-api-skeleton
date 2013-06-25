@@ -1,4 +1,5 @@
 backbone.php
+.tags*
 *.txt
 *.sqlite
 test/

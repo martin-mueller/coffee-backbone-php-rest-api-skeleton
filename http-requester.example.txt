@@ -1,2 +1,0 @@
-PUT http://localhost/coffee-bb-skel/server.php/notes/1
-POST_BODY:
