@@ -3,9 +3,13 @@ namespace MMs;
 require_once 'autoload.php';
 require_once 'lib/PhpConsole.php';
 $debug = true;
+if ($debug) \PhpConsole::start();
 
 $request 	= Request::factory('json');
 $modelName  = $request->getPath(0);
+$allowed_models = array('notes');
+
+if (!in_array($modelName, $allowed_models)) throw new \Exception("404 Fehler kommt hier mal", 1);
 
 $model   = new SimpleModelStore($modelName);
 $data 	 = $request->getData();
@@ -22,13 +26,13 @@ $routes = array(
 
 
 $result = Router::run($routes);
-
+debug($log);
 echo json_encode($result);
 
 
 function debug($message, $tags = 'debug') {
 	if ($GLOBALS['debug'] === true){
-		if (is_array($message))
+		if (is_array($message) || is_object($message))
 			$message = var_export($message, true);
 		\PhpConsole::debug($message, $tags);
 	}

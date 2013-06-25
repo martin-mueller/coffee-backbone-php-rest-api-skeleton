@@ -26,16 +26,14 @@ class Router{
 	public static function set($path, $callback ){
 		//remove multiple whitespaces
 		$path = preg_replace('%\s{2,}%'," ",$path);
-		
 		$path = rtrim($path,'/').'/';
-	
 		self::$routes[$path] = $callback;
 	}
 
 	/**
 	 * Compare Current Request with the Routes and run Callback for the first match
-	 * @param  array  $routes [description]
-	 * @return [type]         [description]
+	 * @param  array  $routes (optional) pass all routes here
+	 * @return mixed return from callback (i.e. a controller)
 	 */
 	public static function run($routes = array()){
 		/**
@@ -49,8 +47,11 @@ class Router{
 		}
 		$test = false;
 		$params = array();
-		echo "<pre>"; print_r(self::$routes);
 		foreach (self::$routes as $path=>$callback) {
+			/**
+			 * extract request- method from path
+			 * if not set: assume GET
+			 */
 			$path_a = explode(' ', $path);
 			if (count($path_a) == 2 && in_array($path_a[0], self::$allowed_methods)){
 				$path   = $path_a[1];
@@ -73,6 +74,8 @@ class Router{
 					}
 				}
 				self::$params = $params;
+				$GLOBALS['log'][] = 'Router matched Route '.$path.' Method '.$method;
+				$GLOBALS['log'][] = 'Router Params:'.implode(',',$params);
 				if (!is_callable($callback)) $callback = __NAMESPACE__.'\\'.$callback;
 				if (!is_callable($callback)){
 					throw new \Exception('Unknown callback function: '.$callback);
