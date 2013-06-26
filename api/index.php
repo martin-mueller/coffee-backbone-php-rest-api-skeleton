@@ -16,12 +16,12 @@ $data 	 = $request->getData();
 // $valid_data = (isset($data) && is_array($data) && !empty($data));
 
 $routes = array(
-	"POST   /{$modelName}"				=> function() use ($model) {return $model->create($id);},
-	"PUT    /{$modelName}/(?<id>\d+)"	=> function($id) use ($model) {return $model->update($id);},
-	"PATCH  /{$modelName}/(?<id>\d+)"	=> function($id) use ($model) {return $model->update($id);},
-	"DELETE /{$modelName}/(?<id>\d+)"	=> function($id) use ($model) {return $model->delete($id);},
-	"GET    /{$modelName}/(?<id>\d+)"	=> function($id) use ($model) {return $model->get($id);},
-	"GET    /{$modelName}"				=> function() use ($model) { return $model->getAll();}
+	"POST   /{$modelName}"				=> function () 	  use ($model, $data) {return $model->create($data);},
+	"PUT    /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model, $data) {return $model->update($id, $data);},
+	"PATCH  /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model, $data) {return $model->update($id, $data);},
+	"DELETE /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model) 		  {return $model->delete($id);},
+	"GET    /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model) 		  {return $model->get($id);},
+	"GET    /{$modelName}"				=> function ()    use ($model)  	  {return $model->getAll();}
 );
 
 
