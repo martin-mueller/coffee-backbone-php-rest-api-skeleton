@@ -65,46 +65,46 @@ requests are logged into log.txt , so take a look what's going on!
 
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-```
-<?php
-namespace MMs;
-require_once 'autoload.php';
-require_once 'lib/PhpConsole.php';
-$debug = true;
-if ($debug) \PhpConsole::start();
+```php
+	<?php
+	namespace MMs;
+	require_once 'autoload.php';
+	require_once 'lib/PhpConsole.php';
+	$debug = true;
+	if ($debug) \PhpConsole::start();
 
-$request 	= Request::factory('json');
-$modelName  = $request->getPath(0);
-$allowed_models = array('notes');
+	$request 	= Request::factory('json');
+	$modelName  = $request->getPath(0);
+	$allowed_models = array('notes');
 
-if (!in_array($modelName, $allowed_models)) throw new \Exception("404 Fehler kommt hier mal", 1);
+	if (!in_array($modelName, $allowed_models)) throw new \Exception("404 Fehler kommt hier mal", 1);
 
-$model   = new SimpleModelStore($modelName);
-$data 	 = $request->getData();
-// $valid_data = (isset($data) && is_array($data) && !empty($data));
+	$model   = new SimpleModelStore($modelName);
+	$data 	 = $request->getData();
+	// $valid_data = (isset($data) && is_array($data) && !empty($data));
 
-$routes = array(
-	"POST   /{$modelName}"				=> function () 	  use ($model, $data) {return $model->create($data);},
-	"PUT    /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model, $data) {return $model->update($id, $data);},
-	"PATCH  /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model, $data) {return $model->update($id, $data);},
-	"DELETE /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model) 		  {return $model->delete($id);},
-	"GET    /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model) 		  {return $model->get($id);},
-	"GET    /{$modelName}"				=> function ()    use ($model)  	  {return $model->getAll();}
-);
-
-
-$result = Router::run($routes);
-debug($log);
-echo json_encode($result);
+	$routes = array(
+		"POST   /{$modelName}"				=> function () 	  use ($model, $data) {return $model->create($data);},
+		"PUT    /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model, $data) {return $model->update($id, $data);},
+		"PATCH  /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model, $data) {return $model->update($id, $data);},
+		"DELETE /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model) 		  {return $model->delete($id);},
+		"GET    /{$modelName}/(?<id>\d+)"	=> function ($id) use ($model) 		  {return $model->get($id);},
+		"GET    /{$modelName}"				=> function ()    use ($model)  	  {return $model->getAll();}
+	);
 
 
-function debug($message, $tags = 'debug') {
-	if ($GLOBALS['debug'] === true){
-		if (is_array($message) || is_object($message))
-			$message = var_export($message, true);
-		\PhpConsole::debug($message, $tags);
+	$result = Router::run($routes);
+	debug($log);
+	echo json_encode($result);
+
+
+	function debug($message, $tags = 'debug') {
+		if ($GLOBALS['debug'] === true){
+			if (is_array($message) || is_object($message))
+				$message = var_export($message, true);
+			\PhpConsole::debug($message, $tags);
+		}
+		return false;
 	}
-	return false;
-}
 
 ```
