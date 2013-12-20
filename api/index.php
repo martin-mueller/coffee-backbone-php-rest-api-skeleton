@@ -1,4 +1,9 @@
 <?php
+/** 
+* @package  MMs php REST api
+* @author  Martin Müller github.com/martin-mueller
+* @version  0.2
+*/
 namespace MMs;
 require_once 'autoload.php';
 require_once 'lib/PhpConsole.php';
