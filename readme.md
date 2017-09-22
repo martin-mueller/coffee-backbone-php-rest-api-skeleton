@@ -1,6 +1,6 @@
 # Simple coffeescript backbone.js example app with php-REST api
 
-![alt=screenshot](http://decentweb.de/assets/images/cardBoard.png)
+
 ## description
 
 ### server side (file: server.php)
@@ -34,11 +34,11 @@ url: 'server.php/notes'
 
 **Routes**
 
-route/ method	|   GET    | POST          |   PUT    |   PATCH    |   DELETE
-----------------|----------|---------------|----------|------------|------
-/:model/:id     | get one  |  create one   |update one| update one| delete one
-                |          |  sends back id|          |           |
-/:model/        | get all  | n.a.          |not implemented| n.a.| n.a
+| route/ method	|   GET    | POST          |   PUT    |   PATCH    |   DELETE
+|----------------|----------|---------------|----------|------------|------
+| /:model/:id     | get one  |  create one   |update one| update one| delete one
+|                |          | sends back id  |          |           |
+| /:model/        | get all  | n.a.          |not implemented| n.a.| n.a
             
 * replace _:model_ with your model name (plural)
 * replace _:id_ with model id, ( **must be integer** !)
